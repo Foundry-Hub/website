@@ -1,5 +1,4 @@
 <?php
-use JsonPath\JsonObject;
 /* Template Name: Package Single View */
 wp_enqueue_style('lightgallery', get_stylesheet_directory_uri() . '/css/lightgallery.css');
 wp_enqueue_style('jquery-modal', get_stylesheet_directory_uri() . '/css/modal.css');

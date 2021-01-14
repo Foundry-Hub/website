@@ -1,6 +1,5 @@
 {
     "require": {
-        "galbar/jsonpath": "^1.1",
         "salesforce/handlebars-php": "^2.3.0",
         "league/oauth2-client": "^2.6"
     }

@@ -1,0 +1,27 @@
+<div class="pkgbox">
+    <a href="/package/{{name}}/" class="pkgbox-cover" style="background-image:url({{url}});background-size:{{coverSize}};">
+        <div class="pkgbox-type pkgbox-type-{{type}}"><i class="fas {{typeIcon}}"></i> {{type}}</div>
+        {{#if library}}
+        <div class="pkgbox-library"><i class="fas fa-cubes"></i> Library</div>
+        {{/if}}
+        {{#if premium}}
+        <div class="pkgbox-premium pkgbox-type-{{premium}}"><i class="far fa-money-bill-alt"></i> Premium content</div>
+        {{/if}}
+    </a>
+    <div class="pkgbox-content">
+        <h3><a href="/package/{{name}}/">{{title}}</a></h3>
+        <div class="pkgbox-info">
+            <p><span class="pbgbox-info-label">Created</span> {{created}}</p>
+            <p><span class="pbgbox-info-label">Updated</span> {{updated}}</p>
+            <p><span class="pbgbox-info-label">{{#inflect nbAuthors 'Author' 'Authors'}}</span> {{authors}}</p>
+            <div class="pkgbox-description">{{description}}</div>
+        </div>
+    </div>
+    <div class="pkgbox-footer">
+        {{#if installs_supported}}
+        <span><i class="fas fa-download"></i>  {{installs}}%</span>
+        {{/if}}
+        <span><i class="fas fa-thumbs-up"></i>  {{endorsements}}</span>
+        <span><i class="fas fa-comment-dots"></i>  {{nbComments}}</span>
+    </div>
+</div>

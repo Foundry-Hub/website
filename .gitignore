@@ -1,0 +1,12 @@
+
+wordpress-stubs.php
+
+composer.lock
+
+vendor/
+
+htdocs/config-hub.php
+
+htdocs/wp-config.php
+
+htdocs/wp-content/themes/aardvark/

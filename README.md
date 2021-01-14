@@ -1,2 +1,1 @@
-# Foundry Hub Website
 

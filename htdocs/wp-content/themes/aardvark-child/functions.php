@@ -1,0 +1,506 @@
+<?php
+require ABSPATH . '../vendor/autoload.php';
+use Handlebars\Handlebars;
+use Handlebars\Loader\FilesystemLoader;
+
+/*
+ * Add your own functions here. You can also copy some of the theme functions into this file and WordPress will use these functions instead of the original functions.
+ */
+
+/**
+ * Load child theme style.css
+ *
+ */
+if (!function_exists('ghostpool_enqueue_child_styles')) {
+    function ghostpool_enqueue_child_styles()
+    {
+        wp_enqueue_style('ghostpool-style', get_template_directory_uri() . '/style.css', array(), AARDVARK_THEME_VERSION);
+        wp_enqueue_style('ghostpool-child-style', get_stylesheet_directory_uri() . '/style.css', array('ghostpool-style'), AARDVARK_THEME_VERSION);
+        wp_style_add_data('ghostpool-child-style', 'rtl', 'replace');
+    }
+}
+add_action('wp_enqueue_scripts', 'ghostpool_enqueue_child_styles');
+
+/**
+ * Load translation file in child theme
+ *
+ */
+if (!function_exists('ghostpool_child_theme_language')) {
+    function ghostpool_child_theme_language()
+    {
+        $language_directory = get_stylesheet_directory() . '/languages';
+        load_child_theme_textdomain('aardvark', $language_directory);
+    }
+}
+add_action('after_setup_theme', 'ghostpool_child_theme_language');
+
+//https://css-tricks.com/wordpress-fragment-caching-revisited/
+// TODO: Currently unused -- Keeping for now, remove before launch --
+function fragment_cache($key, $ttl, $function)
+{
+    if (is_user_logged_in()) {
+        call_user_func($function);
+        return;
+    }
+    $key = apply_filters('fragment_cache_prefix', 'fragment_cache_') . $key;
+    $output = get_transient($key);
+    if (empty($output)) {
+        ob_start();
+        call_user_func($function);
+        $output = ob_get_clean();
+        set_transient($key, $output, $ttl);
+    }
+    echo $output;
+}
+
+/**
+ * Display a timediff in english
+ * Ex: 3 years ago
+ */
+function time_elapsed_string($datetime, $full = false)
+{
+    $now = new DateTime;
+    $ago = $datetime;
+    $diff = $now->diff($ago);
+
+    $diff->w = floor($diff->d / 7);
+    $diff->d -= $diff->w * 7;
+
+    $string = array(
+        'y' => 'year',
+        'm' => 'month',
+        'w' => 'week',
+        'd' => 'day',
+        'h' => 'hour',
+        'i' => 'minute',
+        's' => 'second',
+    );
+    foreach ($string as $k => &$v) {
+        if ($diff->$k) {
+            $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+        } else {
+            unset($string[$k]);
+        }
+    }
+
+    if (!$full) {
+        $string = array_slice($string, 0, 1);
+    }
+
+    return $string ? implode(', ', $string) . ' ago' : 'just now';
+}
+
+/**
+ * Retrieve the Handlebars object with its custom helpers
+ */
+function getHandleBars()
+{
+    # Set the partials files
+    $partialsDir = get_stylesheet_directory() . "/templates";
+    $partialsLoader = new FilesystemLoader($partialsDir,
+        [
+            "extension" => "mustache",
+        ]
+    );
+
+    $handlebars = new Handlebars([
+        "loader" => $partialsLoader,
+        "partials_loader" => $partialsLoader,
+    ]);
+
+    //handlebars helpers
+    $handlebars->addHelper("extension",
+        function ($template, $context, $args, $source) {
+            return pathinfo($context->get($args))['extension'];
+        }
+    );
+
+    $handlebars->addHelper("slugify",
+        function ($template, $context, $args, $source) {
+            return sanitize_title($context->get($args), "error");
+        }
+    );
+
+    $handlebars->addHelper("urlencode",
+        function ($template, $context, $args, $source) {
+            return urlencode($context->get($args));
+        }
+    );
+
+    return $handlebars;
+}
+
+/**
+ * Trick the 404 redirection from WP into loading the single-package view
+ * TODO: Evaluate if this still needed after https://github.com/League-of-Foundry-Developers/foundry-hub/issues/10 ?
+ */
+add_filter('template_include', 'package_404_redirect');
+function package_404_redirect($template)
+{
+    global $wp_query;
+    if (is_404() && get_query_var('package')) {
+        status_header(200);
+        $wp_query->is_404 = false;
+        $new_template = locate_template(array('single-package.php'));
+        if ('' != $new_template) {
+            return $new_template;
+        }
+    }
+    return $template;
+}
+
+/**
+ * Remove the admin bar if the user isn't logged as admin
+ * TODO: Check this function again after setting permission for content managers
+ */
+add_action('after_setup_theme', 'remove_admin_bar');
+function remove_admin_bar()
+{
+    if (!current_user_can('administrator') && !is_admin()) {
+        show_admin_bar(false);
+    }
+}
+
+/**
+ * Get the metadata stored for a 1:1 post/user join
+
+ */
+function get_post_user_meta($post_id, $user_id, $key = '', $force = false)
+{
+    global $wpdb;
+    if ($user_id === 0) {
+        return false;
+    }
+
+    $meta_cache = wp_cache_get($post_id . "_" . $user_id . "_" . $key);
+
+    if (!$meta_cache || $force) {
+        $_post_user_meta = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT meta_value FROM wp_posts_users_meta WHERE post_id = %d AND user_id = %d AND meta_key = %s",
+                $post_id,
+                $user_id,
+                $key
+            ));
+        wp_cache_set($post_id . "_" . $user_id . "_" . $key, $_post_user_meta, '', 60 * 60);
+        return $_post_user_meta;
+    } else {
+        return $meta_cache;
+    }
+
+}
+
+/**
+ * Set the metadata for a 1:1 post/user join
+ * Used for storing endorsements and other datas related to a package and a user
+ */
+function set_post_user_meta($post_id, $user_id, $key = '', $value = '')
+{
+    global $wpdb;
+    if ($user_id === 0) {
+        return false;
+    }
+
+    $wpdb->query(
+        $wpdb->prepare(
+            "INSERT INTO wp_posts_users_meta VALUES (%d, %d, %s, %s) ON DUPLICATE KEY UPDATE meta_value = %s",
+            $post_id,
+            $user_id,
+            $key,
+            $value,
+            $value
+        )
+    );
+    wp_cache_set($post_id . "_" . $user_id . "_" . $key, $value, '', 60 * 60);
+    return true;
+}
+
+/**
+ * Ajax action: Endorse a package
+ */
+add_action('wp_ajax_endorse', 'package_endorse');
+function package_endorse()
+{
+    $post_id = $_POST['post_id'];
+    $user_id = get_current_user_id();
+
+    if ($user_id === 0 || !is_numeric($post_id)) {
+        wp_die();
+    }
+
+    $post_id = absint($post_id);
+    if (!$post_id) {
+        wp_die();
+    }
+
+    $endorsed = get_post_user_meta($post_id, $user_id, "endorsed", true);
+
+    if (!$endorsed) {
+        set_post_user_meta($post_id, $user_id, "endorsed", true);
+        $count = (int) get_post_meta($post_id, "endorsements", true);
+        $count++;
+        update_post_meta($post_id, "endorsements", $count);
+    }
+    wp_die();
+}
+
+/**
+ * Cron to update packages from the master list (Bazaar)
+ * Run every 5 minutes
+ * This function store a the latest update date in the database and run it against the Bazaar "updated" property it to know if a package has been updated
+ * since the last cron execution
+ * TODO: This function is not resilient. Need to add alerts (email should be enough) in case of failure to update, and add a failsafe if the cron takes more than 5 minutes to execute
+ */
+add_action('packages_update_all', 'cron_package_update_all');
+function cron_package_update_all()
+{
+    global $wpdb;
+    $request = wp_remote_get('https://eu.forge-vtt.com/api/bazaar/');
+    if (!is_wp_error($request)) {
+        $body = wp_remote_retrieve_body($request);
+        $data = json_decode($body, true, 512, JSON_INVALID_UTF8_IGNORE);
+
+        //Last update timestamp
+        $lastUpdate = (int) get_option("packages_last_update");
+        echo "Last update: $lastUpdate <br>";
+        $maxUpdate = $lastUpdate;
+        foreach ($data['packages'] as $pkg) {
+            //The bazaar "updated" is more recent than the FHub timestamp. New stuff got added or updated for this package
+            if ($pkg['updated'] > $lastUpdate) {
+
+                if ($pkg['updated'] > $maxUpdate) {
+                    $maxUpdate = $pkg['updated'];
+                }
+                echo "Package needs to be updated: " . $pkg['name'] . " <br>";
+                //Check if the post exists in the BDD.
+                $post_id = $wpdb->get_var(
+                    $wpdb->prepare("SELECT ID FROM wp_posts WHERE post_type = 'package' AND post_name = %s",
+                        $pkg['name']
+                    )
+                );
+
+                //prepapre metadatas
+
+                //from the bazaar "package" endpoint
+                $meta = [];
+                $meta["author"] = $pkg['authors'];
+                $meta["type"] = $pkg['type'];
+                $meta["real_name"] = $pkg['name'];
+                if (isset($pkg['systems'])) {
+                    $meta["systems"] = $pkg['systems'];
+                }
+
+                if (isset($pkg['media'])) {
+                    foreach ($pkg['media'] as $media) {
+                        if ($media['type'] == 'cover') {
+                            $meta['cover'] = $media['url'];
+                        }
+
+                        if ($media['type'] == 'icon') {
+                            $meta['icon'] = $media['url'];
+                        }
+                    }
+                }
+                $meta['installs'] = $pkg['installs'];
+                $meta['latest'] = $pkg['latest'];
+                $meta['created'] = $pkg['created'];
+                $meta['updated'] = $pkg['updated'];
+                $meta['description_full'] = $pkg['description_full'];
+                $meta['url'] = $pkg['url'];
+                if (isset($pkg['premium'])) {
+                    $meta['premium'] = $pkg['premium'];
+                }
+
+                if (isset($pkg['library'])) {
+                    $meta['library'] = $pkg['library'];
+                }
+
+                if (isset($pkg['languages'])) {
+                    $meta['languages'] = $pkg['languages'];
+                }
+
+                $tags = array_values($pkg['tags']);
+
+                //from the "manifest" file
+                $requestManifest = wp_remote_get('https://eu.forge-vtt.com/api/bazaar/manifest/' . $pkg['name'] . '?manifest=1');
+                if (!is_wp_error($request)) {
+                    echo "Retrived manifest for: " . $pkg['name'] . " <br>";
+                    $body_manifest = wp_remote_retrieve_body($requestManifest);
+                    $manifest = json_decode($body_manifest, true, 512, JSON_INVALID_UTF8_IGNORE);
+                    $manifest = $manifest['manifest'];
+
+                    if (isset($manifest['authors'])) {
+                        $meta['authors_full'] = $manifest['authors'];
+                    }
+
+                    if (isset($manifest['download'])) {
+                        $meta['download'] = $manifest['download'];
+                    }
+
+                    if (isset($manifest['dependencies'])) {
+                        $meta['dependencies'] = $manifest['dependencies'];
+                    }
+
+                    $meta['minimumCoreVersion'] = $manifest['minimumCoreVersion'];
+                    $meta['compatibleCoreVersion'] = $manifest['compatibleCoreVersion'];
+
+                    if (isset($manifest['bugs'])) {
+                        $meta['bugs'] = $manifest['bugs'];
+                    }
+
+                    if (isset($manifest['readme'])) {
+                        $meta['readme'] = $manifest['readme'];
+                    }
+
+                    $meta['manifest'] = $manifest['manifest'];
+                    if (isset($manifest['media'])) {
+                        $meta['media'] = $manifest['media'];
+                    }
+
+                }
+
+                //If it doesn't exist, insert a new one
+                if (is_null($post_id)) {
+                    echo "New package, insert: " . $pkg['name'] . " <br>";
+                    $meta['endorsements'] = 0;
+                    $post_id = wp_insert_post(
+                        array(
+                            'post_author' => 1,
+                            'post_title' => $pkg['title'],
+                            'post_content' => $pkg['short_description'],
+                            'post_status' => 'publish',
+                            'post_type' => 'package',
+                            'comment_status' => 'open',
+                            'ping_status' => 'closed',
+                            'post_name' => sanitize_title($pkg['name']),
+                            'tags_input' => $tags,
+                            'meta_input' => $meta,
+                        )
+                    );
+                } else { //Or update the existing post
+                    echo "Existing package, update: " . $pkg['name'] . " <br>";
+                    $data = array(
+                        'ID' => $post_id,
+                        'post_title' => $pkg['title'],
+                        'post_content' => $pkg['short_description'],
+                        'post_status' => 'publish',
+                        'tags_input' => $tags,
+                        'meta_input' => $meta,
+                    );
+
+                    wp_update_post($data);
+                }
+            }
+        }
+        //Once we're done, we save the max update value
+        update_option("packages_last_update", $maxUpdate);
+        echo "Updating LastUpdate to: $maxUpdate <br>";
+    }
+}
+
+/**
+ * Change the OpenGraph image.
+ * The dynamic part of the hook name. $network, is the network slug. Can be facebook or twitter.
+ *
+ * @param string $attachment_url The image we are about to add.
+ */
+add_filter("rank_math/opengraph/facebook/image", 'override_opengraph_image');
+add_filter("rank_math/opengraph/twitter/image", 'override_opengraph_image');
+
+function override_opengraph_image($attachment_url)
+{
+    global $post, $template;
+
+    if (pathinfo($template)['filename'] == "single-package") {
+        if (isset($post->cover)) {
+            return $post->cover;
+        }
+
+        if (isset($post->icon)) {
+            return $post->icon;
+        }
+
+    }
+    return $attachment_url;
+}
+
+/**
+ * Change the "Author" data from the oembed
+ * Visible on a Discord embed
+ */
+function filter_oembed_response_data_author($data, $post, $width, $height)
+{
+
+    if ($post->post_type == "package") {
+        $data['author_name'] = "Author: " . implode(", ", $post->author);
+        $data['author_url'] = "";
+    } else {
+        unset($data['author_name']);
+        unset($data['author_url']);
+    }
+
+    return $data;
+};
+add_filter('oembed_response_data', 'filter_oembed_response_data_author', 10, 4);
+
+/**
+ * Custom Widgets for displaying packages
+ */
+
+// Creating the widget
+class fhub_widget_packages extends WP_Widget
+{
+    public function __construct()
+    {
+        parent::__construct('fhub_widget_packages','Package List',array('description' => 'Display Foundry packages'));
+    }
+
+    // Creating widget front-end
+
+    public function widget($args, $instance)
+    {
+        $title = apply_filters('widget_title', $instance['title']);
+
+        // before and after widget arguments are defined by themes
+        echo $args['before_widget'];
+        if (!empty($title)) {
+            echo $args['before_title'] . $title . $args['after_title'];
+        }
+
+        //DO CODE HERE!!
+
+        echo $args['after_widget'];
+    }
+
+    // Widget Backend
+    public function form($instance)
+    {
+        if (isset($instance['title'])) {
+            $title = $instance['title'];
+        } else {
+            $title = 'New title';
+        }
+        // Widget admin form
+        ?>
+    <p>
+    <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:');?></label>
+    <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
+    </p>
+    <?php
+}
+
+    // Updating widget replacing old instances with new
+    public function update($new_instance, $old_instance)
+    {
+        $instance = array();
+        $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
+        return $instance;
+    }
+}
+
+// Register and load the widget
+function fhub_load_widget()
+{
+    register_widget('fhub_widget_packages');
+}
+add_action('widgets_init', 'fhub_load_widget');

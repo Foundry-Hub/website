@@ -1,0 +1,232 @@
+<div class="pkg-banner" style="background-image:linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url({{cover}})">
+    <div class="pkg-banner-content">
+        <div class="pkg-metatag">
+            <div class="pkg-type pkg-type-{{package.type}}"><i class="fas {{typeIcon}}"></i> {{package.type}}</div>
+            {{#if package.library}}
+            <div class="pkg-library"><i class="fas fa-cubes"></i> Library</div>
+            {{/if}}
+            {{#if package.premium}}
+            <div class="pkg-premium pkg-type-{{premium}}"><i class="far fa-money-bill-alt"></i> Premium content</div>
+            {{/if}}
+        </div>
+        <h1 class="pkg-name">{{title}}</h1>
+        <div class="pkg-banner-left">
+            <div class="pkg-banner-endorsement">
+                <i class="fas fa-thumbs-up"></i>
+                <div class="pkg-banner-title">Endorsement</div>
+                <div class="pkg-endorse-count">{{nbEndorsements}}</div>
+            </div>
+            {{#if installs_supported}}
+            <div title="% of install on 'The Forge'" class="pkg-banner-installs">
+                <i class="fas fa-chart-line"></i>
+                <div class="pkg-banner-title">Installs</div>
+                <div>{{package.installs}}%</div>
+            </div>
+            {{/if}}
+            <div class="pkg-banner-comments">
+                <i class="fas fa-comment-dots"></i>
+                <div class="pkg-banner-title">Comments</div>
+                <div>{{nbComments}}</div>
+            </div>
+        </div>
+        <div class="pkg-banner-right">
+            <button class="pkg-download">
+                <i class="fas fa-download"></i>
+                Download
+            </button>
+            <button {{endorsementDisabled}} data-postid="{{postID}}" class="pkg-endorse {{#if loggedOut}}pkg-login{{/if}}">
+                <i class="fas fa-thumbs-up"></i>
+                {{endorsementText}}
+            </button>
+        </div>
+    </div>
+</div>
+{{#if gallery}}
+<div class="pkg-screenshots">
+    <div id="lightgallery">
+        {{#youtube}}
+        <div data-src="{{url}}" data-exthumbimage="https://img.youtube.com/vi/{{id}}/mqdefault.jpg" class="lightgallery-video">
+            <img src="https://img.youtube.com/vi/{{id}}/mqdefault.jpg" />
+        </div>
+        {{/youtube}}
+        {{#vimeo}}
+        <div data-src="{{url}}" data-exthumbimage="{{thumbnail}}" class="lightgallery-video">
+            <img src="{{thumbnail}}" />
+        </div>
+        {{/vimeo}}
+        {{#videos}}
+        <div class="lightgallery-video" data-exthumbimage="{{thumbnail}}" data-html="#video{{@index}}">
+            <img src="{{thumbnail}}" />
+        </div>
+        {{/videos}}
+        {{#loopedVideos}}
+        <div data-html="#videoloop{{@index}}" data-exthumbtype="{{#extension url}}" data-exthumbimage="{{url}}">
+            <video muted autoplay loop>
+                <source src="{{url}}" type="video/{{#extension url}}">
+            </video>
+        </div>
+        {{/loopedVideos}}
+        {{#screenshots}}
+        <div data-src="{{url}}" data-exthumbimage="{{url}}">
+            <img src="{{url}}" />
+        </div>
+        {{/screenshots}}
+    </div>
+</div>
+{{#videos}}
+<div style="display:none;" id="video{{@index}}">
+    <video class="lg-video-object lg-html5" controls preload="none">
+        <source src="{{url}}" type="video/{{#extension url}}">
+    </video>
+</div>
+{{/videos}}
+{{#loopedVideos}}
+<div style="display:none;" id="videoloop{{@index}}">
+    <video class="lg-video-object lg-html5" muted autoplay loop>
+        <source src="{{url}}" type="video/{{#extension url}}">
+    </video>
+</div>
+{{/loopedVideos}}
+{{/if}}
+{{#if package.tags}}
+<div class="pkg-tag-list">
+    <h2>Tags</h2>
+    <ul>
+        {{#each package.tags}}
+            <a href="/packages/?_sft_post_tag={{#slugify .}}"><li class="pkg-tag"><i class="fas fa-tag"></i>{{.}}</li></a>
+        {{/each}}
+    </ul>
+</div>
+{{/if}}
+<div class="pkg-main" id="pkg-main" data-packageName="{{package.real_name}}">
+    <div class="pkg-left-column">
+        <table>
+        <tr><th>Latest version</th><td>{{package.latest}}</td></tr>
+        <tr><th>Minimum Core</th><td>{{package.minimumCoreVersion}}</td></tr>
+        <tr><th>Compatible Core</th><td>{{package.compatibleCoreVersion}} <i class="fas fa-question-circle" title="Latest known compatible Core version. Compatibility with newer Core version is unknown."></i></td></tr>
+        {{#if filesize}}
+        <tr><th>File size</th><td>{{filesize}}</td></tr>
+        {{/if}}
+        <tr><th>Last updated</th><td title="{{updated_details}}">{{updated}}</td></tr>
+        <tr><th>Created</th><td title="{{created_details}}">{{created}}</td></tr>
+        <tr>
+            <th>Authors</th>
+            <td>
+                <ul>
+                {{#each authors}}
+                    <li>
+                        <a href="/packages/?_sfm_author={{this.name}}">{{this.name}}</a>
+                        <ul>
+                        {{#if this.url}}
+                            <li>
+                                <i class="fas fa-external-link-square-alt"></i> <a href="{{this.url}}" target="_blank">Author URL</a>
+                            </li>
+                        {{/if}}
+                        {{#if this.email}}
+                            <li>
+                                <i class="fas fa-envelope-square"></i> {{{this.email}}}
+                            </li>
+                        {{/if}}
+                        {{#if this.discord}}
+                            <li>
+                                <i class="fab fa-discord"></i> @{{this.discord}}
+                            </li>
+                        {{/if}}
+                        {{#if this.twitter}}
+                            <li>
+                                <i class="fab fa-twitter-square"></i> <a href="https://twitter.com/{{this.twitter}}" target="_blank">@{{this.twitter}}</a>
+                            </li>
+                        {{/if}}
+                        {{#if this.reddit}}
+                            <li>
+                                <i class="fab fa-reddit-square"></i> <a href="https://www.reddit.com/user/{{this.reddit}}/" target="_blank">u/{{this.reddit}}</a>
+                            </li>
+                        {{/if}}
+                        {{#if this.patreon}}
+                            <li>
+                                <i class="fab fa-patreon"></i> <a href="https://www.patreon.com/{{this.patreon}}/" target="_blank">{{this.patreon}}</a>
+                            </li>
+                        {{/if}}
+                        </ul>
+                    </li>
+                {{/each}}
+                </ul>
+            </td>
+        </tr>
+        {{#if languages}}
+        <tr>
+            <th>Languages</th>
+            <td>
+                {{#languages}}
+                    {{name}}<br>
+                {{/languages}}
+            </td>
+        </tr>
+        {{/if}}
+        <tr>
+            <th>Systems</th>
+            <td>
+                {{#each package.systems}}
+                    {{#capitalize .}}<br>
+                {{else}}
+                    All systems
+                {{/each}}
+            </td>
+        </tr>
+        {{#if dependencies}}
+        <tr>
+            <th>Dependencies</th>
+            <td>
+                {{#each dependencies}}
+                    <a href="/package/{{name}}">{{title}}</a><br>
+                {{/each}}
+            </td>
+        </tr>
+        {{/if}}
+        <tr><th>Project source</th><td><a href="{{package.url}}" target="_blank"><i class="fas fa-link"></i> Project URL</a></td></tr>
+        {{#if package.bugs}}
+        <tr><th>Report bugs</th><td><a href="{{package.bugs}}" target="_blank"><i class="fas fa-link"></i> Bug tracker URL</a></td></tr>
+        {{/if}}
+        {{#if package.readme}}
+        <tr><th>Read-me</th><td><a href="{{package.readme}}" target="_blank"><i class="fas fa-link"></i> Readme URL</a></td></tr>
+        {{/if}}
+        </table>
+    </div>
+    <div class="pkg-right-column">
+        <h2>Description</h2>
+        <p>{{{package.description_full}}}</p>
+    </div>
+</div>
+<div style="display:none;">
+    <div id="pkg-download-modal" class="modal">
+        <div class="popup-tabs">
+            <div id="tab-download-classic" class="popup-tab">
+                Classic
+            </div>
+            <div id="tab-download-forge" class="popup-tab">
+                The Forge
+            </div>
+        </div>
+        <div class="popup-content-container">
+            <div id="content-download-classic" class="popup-content">
+                <p>To install this package, open your Foundry Setup screen and navigate to your {{#capitalize package.type}} tab and click the <span class="pkg-highlight">Install {{#capitalize package.type}}</span> button.</p>
+                <p>From there, you can either search for the package unique name: <span class="pkg-highlight">{{package.real_name}}</span> or copy its manifest URL:</p>
+                <p class="flex">
+                    <input type="text" class="manifest-url" value="{{package.manifest}}" />
+                    <button class="manifest-copy"><i class="fas fa-copy"></i></button>
+                </p>
+                <p>And paste it to the input box at the bottom of your window.</p>
+                <p><img src="https://www.foundryvtt-hub.com/wp-content/themes/aardvark-child/images/install-package.jpg" /></p>
+            </div>
+            <div id="content-download-forge" class="popup-content">
+                <p>You can install this package directly to your <a href="https://forge-vtt.com" target="_blank">Forge</a> account.</p>
+                {{#if hasAccessForge}}
+                <p style="display:none;" id="forge-download-container"><button id="forge-download" class="forge-oauth"><i class="fas fa-cloud-download-alt"></i><span>Install now</span></button></p>
+                <p style="display:none;" id="forge-message"></p>
+                {{else}}
+                <p><button id="forge-oauth-login" class="forge-oauth"><span class="forge-btn-text">Login with your Forge account</span></button></p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>

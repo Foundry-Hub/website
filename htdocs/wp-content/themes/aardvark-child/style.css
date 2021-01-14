@@ -1,0 +1,644 @@
+/*
+Theme Name: Aardvark Child
+Description: A <a href='http://codex.wordpress.org/Child_Themes'>Child Theme</a> for the Aardvark WordPress theme.
+Version: 1.0
+Author: GhostPool
+Author URI: http://www.ghostpool.com
+Text Domain: aardvark
+Template: aardvark
+*/
+
+/* SINGLE PACKAGE */
+
+#pkg-single {
+  width: 100%;
+}
+
+#pkg-single .fas {
+  font-family: 'Font Awesome 5 Free', 'FontAwesome';
+}
+
+.pkg-banner {
+  height: 250px;
+  background-size: cover, cover;
+  background-position: center;
+  position: relative;
+}
+
+.pkg-banner-content {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+}
+
+.pkg-type-module {
+  background: #7C303E;
+}
+
+.pkg-type-system {
+  background: #30357C;
+}
+
+.pkg-type-world {
+  background: #307C35;
+}
+
+.pkg-premium {
+  background: #C68E43;
+}
+
+.pkg-library {
+  background: #54216B;
+}
+
+.pkg-metatag div {
+  width: fit-content;
+  display: inline-block;
+  margin-top: 10px;
+  color: white;
+  text-transform: uppercase;
+  font-size: 12px;
+  line-height: 18px;
+  padding: 5px;
+}
+
+.pkg-name {
+  color: white;
+  position: absolute;
+  bottom: 35px;
+  font-size: 40px;
+}
+
+.pkg-banner-left {
+  float: left;
+  width: 50%;
+  margin-left: 10px;
+  bottom: 0;
+  position: absolute;
+  color: #fff;
+}
+
+.pkg-banner-right {
+  float: right;
+  width: 50%;
+  text-align: right;
+  bottom: 0px;
+  position: absolute;
+  right: 10px;
+}
+
+.pkg-banner-left div {
+  display: inline-block;
+  height: 36px;
+  width: 150px;
+  line-height: normal;
+}
+
+.pkg-banner-left div div {
+  margin-left: 50px;
+}
+
+.pkg-banner-left div.pkg-banner-title {
+  font-size: 11px;
+  height: 15px;
+}
+
+.pkg-banner-left i {
+  font-size: 30px;
+  position: absolute;
+  padding: 7px;
+}
+
+.pkg-banner-right i {
+  padding-right: 4px;
+}
+
+#pkg-single button:disabled, .modal button:disabled {
+  background: #D5812C;
+  cursor: auto;
+}
+
+.pkg-banner-right button {
+  width: 125px;
+}
+
+.pkg-screenshots {
+  height: 165px;
+  padding: 15px 0px;
+}
+
+.pkg-screenshots img, .pkg-screenshots video {
+  max-height: 135px;
+  max-width: 242px;
+}
+
+#lightgallery div {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+#lightgallery {
+  display: flex;
+  overflow-x: auto;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #447dc7;
+  border: 0px solid #ffffff;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #76a0d6;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #92a9c7;
+}
+
+::-webkit-scrollbar-track {
+  background: #888888;
+  border: 0px solid #ffffff;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-track:hover {
+  background: #888888;
+}
+
+::-webkit-scrollbar-track:active {
+  background: #666666;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.pkg-tag-list {
+  background: #DCE6F4;
+  margin-top: 15px;
+}
+
+.pkg-tag-list h2 {
+  font-size: 20px;
+  color: #050301;
+  padding: 0px 10px;
+  font-variant: all-small-caps;
+  margin: 0px;
+}
+
+.pkg-tag-list ul {
+  list-style: none;
+  margin: 0px;
+}
+
+li.pkg-tag {
+  margin: 2px 10px 10px 10px;
+  padding: 0px 5px;
+  border: 1px solid #21416C;
+  color: #21416C;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.pkg-tag i {
+  margin: 7px 5px 0px 2px;
+}
+
+.pkg-left-column {
+  width: 350px;
+  color: white;
+}
+
+.pkg-right-column {
+  width: 850px;
+  padding: 0px 15px;
+}
+
+.pkg-left-column span {
+  font-weight: 500;
+  color: #21416C;
+}
+
+.pkg-main {
+  padding: 20px 0px;
+  display: flex;
+  flex-wrap: wrap;
+  word-break: break-word;
+}
+
+.pkg-left-column table tr th {
+  padding: 0px 5px;
+  background-color: #21416C;
+  border: none;
+  font-size: 14px;
+  vertical-align: top;
+  width: 120px;
+}
+
+.pkg-left-column td {
+  font-size: 14px;
+  border: none;
+  vertical-align: top;
+  padding: 0px 5px;
+  background-color: #DCE6F4;
+  color: #050301;
+}
+
+.pkg-left-column table {
+  border: none;
+}
+
+.pkg-left-column ul {
+  list-style: none;
+  margin: 0 0 0 0;
+}
+
+.pkg-left-column ul ul {
+  margin: 0 0 5px 24px;
+  line-height: 18px;
+}
+
+.pkg-left-column a {
+  color: #132640;
+  font-weight: 500;
+}
+
+.popup-tabs {
+  display: flex;
+  background: #76A0D6;
+  height: 40px;
+  align-items: center;
+}
+
+.popup-tab {
+  flex: 1;
+  text-align: center;
+  font-weight: 500;
+  color: #21416C;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.popup-tab:hover {
+  color: #050301;
+}
+
+.tab-active {
+  text-decoration: underline;
+  color: #050301;
+}
+
+.popup-content-container {
+  margin: 5px 15px 15px 15px;
+}
+
+.popup-content {
+  display: none;
+}
+
+.popup-content-active {
+  display: block;
+}
+
+span.pkg-highlight {
+  font-family: monospace;
+  background: #3f7796;
+  color: white;
+  padding: 3px 5px;
+  border: 1px solid #050301;
+  white-space: nowrap;
+}
+
+.flex {
+  display: flex;
+}
+
+input.manifest-url {
+  flex: 1;
+}
+
+button.manifest-copy {
+  height: 34px;
+  flex: 0 0 34px;
+  padding: 0px;
+}
+
+.popup-tab:not(:first-child) {
+  border-left: 1px solid black;
+}
+
+span.forge-btn-text {
+  background-image: url(https://www.foundryvtt-hub.com/wp-content/themes/aardvark-child/images/the-forge-logo-32x32.png);
+  background-repeat: no-repeat;
+  padding: 0px 26px;
+  background-size: contain;
+}
+
+button.forge-oauth {
+  width: 100%;
+}
+
+button.forge-oauth span {
+  margin-left: 10px;
+}
+
+#forge-message.info {
+  border: 1px solid #9c6200;
+  background: #dbab70;
+  border-radius: 5px;
+  color: #050301;
+  text-align: center;
+}
+
+#forge-message.error {
+  border: 1px solid #9c0000;
+  background: #db7070;
+  border-radius: 5px;
+  color: white;
+  text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+  .pkg-banner-left {
+    background: #050301ba;
+  }
+  .pkg-name {
+    font-size: 6vw;
+    top: 15px;
+    bottom: unset;
+  }
+  .pkg-download {
+    margin-bottom: 5px;
+  }
+  .pkg-metatag {
+    display: none;
+  }
+}
+
+/* PACKAGE BOX */
+
+#pkgs-box-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 10px;
+  row-gap: 10px;
+}
+
+@media screen and (max-width: 768px) {
+  #pkgs-box-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pkgbox {
+  height: 365px;
+  position: relative;
+  background: #E1E9F3;
+  display: flex;
+  flex-direction: column;
+}
+
+.pkgbox-cover {
+  height: 144px;
+  position: relative;
+  display: block;
+  background-size: cover;
+  flex: 0 0 144px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #465a74;
+}
+
+.pkgbox-type {
+  position: absolute;
+  bottom: 0;
+  color: white;
+  text-transform: uppercase;
+  font-size: 12px;
+  line-height: 18px;
+  padding: 5px;
+}
+
+.pkgbox-type-module {
+  background: #7C303E;
+}
+
+.pkgbox-type-system {
+  background: #30357C;
+}
+
+.pkgbox-type-world {
+  background: #307C35;
+}
+
+.pkgbox-premium {
+  background: #C68E43;
+  position: absolute;
+  bottom: 28px;
+  color: white;
+  text-transform: uppercase;
+  font-size: 12px;
+  line-height: 18px;
+  padding: 5px;
+}
+
+.pkgbox-library {
+  background: #54216B;
+  position: absolute;
+  bottom: 28px;
+  color: white;
+  text-transform: uppercase;
+  font-size: 12px;
+  line-height: 18px;
+  padding: 5px;
+}
+
+.pkgbox-content h3 {
+  font-size: 20px;
+  margin: 0;
+  line-height: normal;
+  padding: 5px 0px;
+}
+
+.pkgbox-info p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.pbgbox-info-label {
+  font-weight: 500;
+  color: #050301;
+}
+
+.pkgbox-description {
+  line-height: normal;
+}
+
+.pkgbox-footer {
+  font-size: 14px;
+  color: white;
+  background: #21416C;
+  flex: 0 0 auto;
+}
+
+.pkgbox-footer span {
+  padding: 5px;
+}
+
+.pkgbox-content {
+  flex: 1 1 100%;
+  padding: 0px 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+.pkgbox-content::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1.5em;
+  display: block;
+  background: linear-gradient(0deg, rgba(225, 233, 243, 1) 5%, rgba(225, 233, 243, 0) 100%);
+  content: "";
+}
+
+.searchandfilter input.sf-input-text {
+  width: 100%;
+}
+
+.searchandfilter select.sf-input-select {
+  width: 100%;
+}
+
+.searchandfilter ul li.sf-field-submit {
+  display: inline-block !important;
+  width: 50%;
+  padding: 10px 10px;
+}
+
+.searchandfilter li.sf-field-reset {
+  display: inline-block !important;
+  width: 50%;
+}
+
+.searchandfilter input.search-filter-reset {
+  width: 100%;
+}
+
+.searchandfilter input[type="submit"] {
+  width: 100%;
+}
+
+.searchandfilter label {
+  width: 100%;
+}
+
+.searchandfilter select[name="_sfm_type[]"] {
+  text-transform: capitalize;
+}
+
+.searchandfilter label.sf-label-checkbox {
+  width: auto;
+}
+
+.searchandfilter li.sf-level-0 {
+  border: none;
+  line-height: normal;
+}
+
+.searchandfilter .select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: #999;
+  line-height: 34px;
+}
+
+.searchandfilter span.select2-selection.select2-selection--single {
+  border: 1px solid #e6e6e6;
+  border-radius: 3px;
+  height: 34px;
+}
+
+.searchandfilter span.select2-selection__arrow {
+  line-height: 34px;
+  height: 34px !important;
+}
+
+.pkgs-results-number {
+  background: #447DC7;
+  margin-bottom: 15px;
+  padding: 0px 10px;
+  color: white;
+}
+
+.pkgs-page-info {
+  background: #447DC7;
+  margin-top: 15px;
+  padding: 0px 10px;
+  color: white;
+  text-align: center;
+}
+
+.pkgs-page-info a {
+  color: white;
+}
+
+.pkgs-page-info .wp-pagenavi a, .wp-pagenavi span {
+  border: none;
+}
+
+
+/* Fix font awesome 4 to font awesome 5*/
+.gp-theme #buddypress #object-nav li a::before{
+  font-weight: 900 !important;
+}
+
+#user-community:before {
+  content: '\f086' !important;
+}
+
+.gp-theme #buddypress #object-nav #notifications-personal-li a:before {
+  content: '\f0f3' !important;
+}
+
+.gp-theme #buddypress #object-nav #members-groups-li a:before {
+  content: '\f007' !important;
+}
+
+.gp-theme #buddypress #object-nav #xprofile-personal-li a:before {
+  content: '\f007' !important;
+}
+#gp-share-icons a::before {
+  font-family: 'Font Awesome 5 Brands' !important;
+}
+
+.gp-entry-meta .gp-meta-comments::before {
+  content: '\f075' !important;
+}
+
+.gp-entry-meta .gp-meta-likes::before {
+  content: '\f164' !important;
+}
+
+.gp-theme #buddypress div.activity-meta .delete-activity::before, .gp-theme #buddypress div.activity-meta .delete-activity-single::before, .gp-theme #buddypress div.acomment-options .acomment-delete::before {
+  content: '\f2ed' !important;
+}
+
+.gp-theme #buddypress div.activity-meta .acomment-reply::before, .gp-theme #buddypress div.acomment-options .acomment-reply::before {
+  content: '\f075' !important;
+}

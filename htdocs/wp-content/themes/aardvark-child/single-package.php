@@ -54,6 +54,8 @@ if (is_null($post_id)) {
     });
 
     $authors = $meta['authors_full'];
+    if(!is_array($authors))
+        $authors = [];
     if (!$authors || !is_array($authors[0])) {
         foreach ($post->author as $name) {
             $authors[] = ["name" => $name];

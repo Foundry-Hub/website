@@ -8,7 +8,7 @@ Text Domain: aardvark
 Template: aardvark
 */
 
-/* SINGLE PACKAGE */
+/* SINGLE PACKAGE PAGE */
 
 #pkg-single {
   width: 100%;
@@ -343,7 +343,7 @@ button.manifest-copy {
 }
 
 span.forge-btn-text {
-  background-image: url(https://www.foundryvtt-hub.com/wp-content/themes/aardvark-child/images/the-forge-logo-32x32.png);
+  background-image: url(/wp-content/themes/aardvark-child/images/the-forge-logo-32x32.png);
   background-repeat: no-repeat;
   padding: 0px 26px;
   background-size: contain;

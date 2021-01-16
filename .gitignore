@@ -1,12 +1,13 @@
+# Ignore everything
+*
+# But descend into directories
+!*/
+# You can be specific with these rules
+!/htdocs/api/**
+!/htdocs/wp-content/themes/aardvark-child/**
+!/htdocs/wp-content/plugins/bp-custom.php
+!/composer.json
+!/README.md
+!/.gitlab-ci.yml
+!/.gitignore
 
-wordpress-stubs.php
-
-composer.lock
-
-vendor/
-
-htdocs/config-hub.php
-
-htdocs/wp-config.php
-
-htdocs/wp-content/themes/aardvark/

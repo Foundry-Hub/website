@@ -1,5 +1,4 @@
 <?php
-use JsonPath\JsonObject;
 /* Template Name: Package Single View */
 wp_enqueue_style('lightgallery', get_stylesheet_directory_uri() . '/css/lightgallery.css');
 wp_enqueue_style('jquery-modal', get_stylesheet_directory_uri() . '/css/modal.css');
@@ -55,6 +54,8 @@ if (is_null($post_id)) {
     });
 
     $authors = $meta['authors_full'];
+    if(!is_array($authors))
+        $authors = [];
     if (!$authors || !is_array($authors[0])) {
         foreach ($post->author as $name) {
             $authors[] = ["name" => $name];

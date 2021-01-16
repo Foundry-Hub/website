@@ -1,0 +1,28 @@
+stages:
+  - deploy
+
+deploy_staging:
+  stage: deploy
+  tags:
+    - deployment
+  script:
+    - chmod og= $SSH_PRIVATE_KEY
+    - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $DEPLOY_USER@$STAGING_IP "cd /opt/bitnami/apps/wordpress && git checkout staging && git pull && exit"
+  environment:
+    name: staging
+    url: https://staging.foundryvtt-hub.com
+  only:
+    - staging
+
+deploy_prod:
+  stage: deploy
+  tags:
+    - deployment
+  script:
+    - chmod og= $SSH_PRIVATE_KEY
+    - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $DEPLOY_USER@$PROD1_IP "cd /opt/bitnami/apps/wordpress && git checkout production && git pull && exit"
+  environment:
+    name: production
+    url: https://www.foundryvtt-hub.com
+  only:
+    - production

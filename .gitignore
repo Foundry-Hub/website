@@ -8,5 +8,6 @@
 !/htdocs/wp-content/plugins/bp-custom.php
 !/composer.json
 !/README.md
+!/.gitlab-ci.yml
 !/.gitignore
 

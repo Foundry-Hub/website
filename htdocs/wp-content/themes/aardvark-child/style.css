@@ -642,3 +642,8 @@ button.forge-oauth span {
 .gp-theme #buddypress div.activity-meta .acomment-reply::before, .gp-theme #buddypress div.acomment-options .acomment-reply::before {
   content: '\f075' !important;
 }
+
+/* Disable header login icon*/
+.gp-header-buttons .gp-profile-button{
+  display:none;
+}

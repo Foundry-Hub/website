@@ -223,7 +223,7 @@ if (is_null($post_id)) {
         "postID" => get_the_ID(),
         "loggedOut" => get_current_user_id() === 0,
         "package" => $meta,
-        "title" => $post->post_title,
+        "title" => html_entity_decode($post->post_title),
         "cover" => $cover,
         "videos" => $videos,
         "loopedVideos" => $loopedVideos,

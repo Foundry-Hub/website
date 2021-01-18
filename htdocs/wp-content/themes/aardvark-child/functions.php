@@ -264,7 +264,9 @@ function cron_package_update_all()
         $lastUpdate = (int) get_option("packages_last_update");
         echo "Last update: $lastUpdate <br>";
         $maxUpdate = $lastUpdate;
+        $currentListOfPackage = [];
         foreach ($data['packages'] as $pkg) {
+            $currentListOfPackage[] = $pkg['name'];
             //The bazaar "updated" is more recent than the FHub timestamp. New stuff got added or updated for this package
             if ($pkg['updated'] > $lastUpdate) {
 
@@ -341,8 +343,11 @@ function cron_package_update_all()
                         $meta['dependencies'] = $manifest['dependencies'];
                     }
 
-                    $meta['minimumCoreVersion'] = $manifest['minimumCoreVersion'];
-                    $meta['compatibleCoreVersion'] = $manifest['compatibleCoreVersion'];
+                    if(isset($manifest['minimumCoreVersion']))
+                        $meta['minimumCoreVersion'] = $manifest['minimumCoreVersion'];
+
+                    if(isset($manifest['compatibleCoreVersion']))
+                        $meta['compatibleCoreVersion'] = $manifest['compatibleCoreVersion'];
 
                     if (isset($manifest['bugs'])) {
                         $meta['bugs'] = $manifest['bugs'];
@@ -356,7 +361,6 @@ function cron_package_update_all()
                     if (isset($manifest['media'])) {
                         $meta['media'] = $manifest['media'];
                     }
-
                 }
 
                 //If it doesn't exist, insert a new one
@@ -395,6 +399,18 @@ function cron_package_update_all()
         //Once we're done, we save the max update value
         update_option("packages_last_update", $maxUpdate);
         echo "Updating LastUpdate to: $maxUpdate <br>";
+
+        //Now we try to find deleted packages to unpublish them
+        $publishedPackages = $wpdb->get_col("SELECT post_name FROM wp_posts WHERE post_type = 'package' AND post_status = 'publish'");
+        $deletedPackages = array_diff($publishedPackages, $currentListOfPackage);
+        echo 'Unpublishing deleted packages<br>';
+        $cronquery = 'UPDATE wp_posts SET post_status = "private" WHERE post_type="package" AND post_name IN ("'.implode('","',$deletedPackages).'")';
+        if(count($deletedPackages)){
+            echo $cronquery.'<br>';
+            $wpdb->query($cronquery);
+        }
+        else
+            echo 'No deleted packages<br>';
     }
 }
 

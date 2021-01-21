@@ -520,3 +520,42 @@ function fhub_load_widget()
     register_widget('fhub_widget_packages');
 }
 add_action('widgets_init', 'fhub_load_widget');
+
+
+/**
+ * Hide unwanted admin menu for users
+ */
+function custom_menu_page_removing() {
+    remove_menu_page('vc-welcome');
+    
+    if(!current_user_can('administrator')){
+        remove_menu_page( 'tools.php' );  
+        remove_submenu_page('index.php','relevanssi_admin_search');
+    }
+}
+add_action( 'admin_init', 'custom_menu_page_removing' );  
+
+add_filter( 'body_class', function( $classes ){
+    foreach( (array) wp_get_current_user()->roles as $role ){
+        $classes[] = "user-role-$role";
+    }
+    return $classes;
+});
+
+/**
+ * Add the user role as a body class to customize the admin area to improve friendliness
+ */
+add_filter( 'admin_body_class', function( $classes ){
+    foreach( (array) wp_get_current_user()->roles as $role ){
+        $classes .= " user-role-$role ";
+    }
+    return $classes;      
+});
+
+/**
+ * Custom CSS for Admin Area
+ */
+function load_admin_style() {
+    wp_enqueue_style( 'admin_css', get_stylesheet_directory_uri() . '/css/admin-style.css', false, '1.0.0' );
+}
+add_action( 'admin_enqueue_scripts', 'load_admin_style' );

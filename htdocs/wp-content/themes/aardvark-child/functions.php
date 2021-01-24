@@ -150,15 +150,12 @@ function package_404_redirect($template)
 }
 
 /**
- * Remove the admin bar if the user isn't logged as admin
- * TODO: Check this function again after setting permission for content managers
+ * Remove the admin bar if the user isn't logged
  */
 add_action('after_setup_theme', 'remove_admin_bar');
 function remove_admin_bar()
 {
-    if (!current_user_can('administrator') && !is_admin()) {
-        show_admin_bar(false);
-    }
+    show_admin_bar(is_user_logged_in());
 }
 
 /**

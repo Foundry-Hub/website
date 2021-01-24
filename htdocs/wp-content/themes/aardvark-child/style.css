@@ -647,3 +647,7 @@ button.forge-oauth span {
 .gp-header-buttons .gp-profile-button{
   display:none;
 }
+
+.h-captcha{
+  width:303px;
+}

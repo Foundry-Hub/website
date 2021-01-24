@@ -150,15 +150,12 @@ function package_404_redirect($template)
 }
 
 /**
- * Remove the admin bar if the user isn't logged as admin
- * TODO: Check this function again after setting permission for content managers
+ * Remove the admin bar if the user isn't logged
  */
 add_action('after_setup_theme', 'remove_admin_bar');
 function remove_admin_bar()
 {
-    if (!current_user_can('administrator') && !is_admin()) {
-        show_admin_bar(false);
-    }
+    show_admin_bar(is_user_logged_in());
 }
 
 /**
@@ -264,7 +261,9 @@ function cron_package_update_all()
         $lastUpdate = (int) get_option("packages_last_update");
         echo "Last update: $lastUpdate <br>";
         $maxUpdate = $lastUpdate;
+        $currentListOfPackage = [];
         foreach ($data['packages'] as $pkg) {
+            $currentListOfPackage[] = $pkg['name'];
             //The bazaar "updated" is more recent than the FHub timestamp. New stuff got added or updated for this package
             if ($pkg['updated'] > $lastUpdate) {
 
@@ -341,8 +340,11 @@ function cron_package_update_all()
                         $meta['dependencies'] = $manifest['dependencies'];
                     }
 
-                    $meta['minimumCoreVersion'] = $manifest['minimumCoreVersion'];
-                    $meta['compatibleCoreVersion'] = $manifest['compatibleCoreVersion'];
+                    if(isset($manifest['minimumCoreVersion']))
+                        $meta['minimumCoreVersion'] = $manifest['minimumCoreVersion'];
+
+                    if(isset($manifest['compatibleCoreVersion']))
+                        $meta['compatibleCoreVersion'] = $manifest['compatibleCoreVersion'];
 
                     if (isset($manifest['bugs'])) {
                         $meta['bugs'] = $manifest['bugs'];
@@ -356,7 +358,6 @@ function cron_package_update_all()
                     if (isset($manifest['media'])) {
                         $meta['media'] = $manifest['media'];
                     }
-
                 }
 
                 //If it doesn't exist, insert a new one
@@ -395,6 +396,18 @@ function cron_package_update_all()
         //Once we're done, we save the max update value
         update_option("packages_last_update", $maxUpdate);
         echo "Updating LastUpdate to: $maxUpdate <br>";
+
+        //Now we try to find deleted packages to unpublish them
+        $publishedPackages = $wpdb->get_col("SELECT post_name FROM wp_posts WHERE post_type = 'package' AND post_status = 'publish'");
+        $deletedPackages = array_diff($publishedPackages, $currentListOfPackage);
+        echo 'Unpublishing deleted packages<br>';
+        $cronquery = 'UPDATE wp_posts SET post_status = "private" WHERE post_type="package" AND post_name IN ("'.implode('","',$deletedPackages).'")';
+        if(count($deletedPackages)){
+            echo $cronquery.'<br>';
+            $wpdb->query($cronquery);
+        }
+        else
+            echo 'No deleted packages<br>';
     }
 }
 
@@ -504,3 +517,42 @@ function fhub_load_widget()
     register_widget('fhub_widget_packages');
 }
 add_action('widgets_init', 'fhub_load_widget');
+
+
+/**
+ * Hide unwanted admin menu for users
+ */
+function custom_menu_page_removing() {
+    remove_menu_page('vc-welcome');
+    
+    if(!current_user_can('administrator')){
+        remove_menu_page( 'tools.php' );  
+        remove_submenu_page('index.php','relevanssi_admin_search');
+    }
+}
+add_action( 'admin_init', 'custom_menu_page_removing' );  
+
+add_filter( 'body_class', function( $classes ){
+    foreach( (array) wp_get_current_user()->roles as $role ){
+        $classes[] = "user-role-$role";
+    }
+    return $classes;
+});
+
+/**
+ * Add the user role as a body class to customize the admin area to improve friendliness
+ */
+add_filter( 'admin_body_class', function( $classes ){
+    foreach( (array) wp_get_current_user()->roles as $role ){
+        $classes .= " user-role-$role ";
+    }
+    return $classes;      
+});
+
+/**
+ * Custom CSS for Admin Area
+ */
+function load_admin_style() {
+    wp_enqueue_style( 'admin_css', get_stylesheet_directory_uri() . '/css/admin-style.css', false, '1.0.0' );
+}
+add_action( 'admin_enqueue_scripts', 'load_admin_style' );

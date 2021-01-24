@@ -1,5 +1,5 @@
 <?php
-/* Template Name: Package Browser */
+/* Template Name: Creator Browser */
 get_header();
 
 /**

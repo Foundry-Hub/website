@@ -3,8 +3,8 @@ session_start();
 require '../../../vendor/autoload.php';
 require '../../config-hub.php';
 $provider = new \League\OAuth2\Client\Provider\GenericProvider([
-    'clientId' => $forgeClientID, // The client ID assigned to you by the provider
-    'clientSecret' => $forgeClientSecret, // The client password assigned to you by the provider
+    'clientId' => FORGE_CLIENT_ID, // The client ID assigned to you by the provider
+    'clientSecret' => FORGE_CLIENT_SECRET, // The client password assigned to you by the provider
     'redirectUri' => 'https://www.foundryvtt-hub.com/api/forge/oauth_callback.php',
     'urlAuthorize' => 'https://forge-vtt.com/oauth2/authorize',
     'urlAccessToken' => 'https://forge-vtt.com/oauth2/token',

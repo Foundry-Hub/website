@@ -1,5 +1,6 @@
 <?php
 require ABSPATH . '../vendor/autoload.php';
+require ABSPATH . '/config-hub.php';
 use Handlebars\Handlebars;
 use Handlebars\Loader\FilesystemLoader;
 
@@ -522,15 +523,17 @@ add_action('widgets_init', 'fhub_load_widget');
 /**
  * Hide unwanted admin menu for users
  */
-function custom_menu_page_removing() {
-    remove_menu_page('vc-welcome');
-    
-    if(!current_user_can('administrator')){
-        remove_menu_page( 'tools.php' );  
-        remove_submenu_page('index.php','relevanssi_admin_search');
+/*function custom_menu_page_removing() {
+    if(is_admin()){
+        remove_menu_page('vc-welcome');
+        
+        if(!current_user_can('administrator')){
+            remove_menu_page( 'tools.php' );  
+            remove_submenu_page('index.php','relevanssi_admin_search');
+        }
     }
 }
-add_action( 'admin_init', 'custom_menu_page_removing' );  
+add_action( 'admin_init', 'custom_menu_page_removing' );  */
 
 add_filter( 'body_class', function( $classes ){
     foreach( (array) wp_get_current_user()->roles as $role ){
@@ -556,3 +559,79 @@ function load_admin_style() {
     wp_enqueue_style( 'admin_css', get_stylesheet_directory_uri() . '/css/admin-style.css', false, '1.0.0' );
 }
 add_action( 'admin_enqueue_scripts', 'load_admin_style' );
+
+/**
+ * Custom report action for the forum
+ */
+remove_action('wp_ajax_wpforo_report_ajax', 'wpf_report');
+add_action('wp_ajax_wpforo_report_ajax', 'wpf_report_custom');
+function wpf_report_custom(){
+    if(!is_user_logged_in()) return;
+	
+	if( !isset($_POST['reportmsg']) || !$_POST['reportmsg'] || !isset($_POST['postid']) || !$_POST['postid'] ){
+		WPF()->notice->add('Error: please insert some text to report.', 'error');
+		echo json_encode( WPF()->notice->get_notices() );
+		exit();
+    }
+    $postid = intval($_POST['postid']);
+    $webhookurl = WEBHOOK_FORUM_REPORT;
+    $timestamp = date("c", strtotime("now"));
+		
+	$message = stripslashes(strip_tags(wpforo_kses(substr($_POST['reportmsg'], 0, 1000), 'email')));
+
+    $json_data = json_encode([
+        // Message
+        "content" => "New report received",
+        
+        // Username
+        "username" => "wpForo Report",
+
+        // Embeds Array
+        "embeds" => [
+            [
+                // Embed Title
+                "title" => "Reported Message",
+
+                // Embed Type
+                "type" => "rich",
+
+                // Embed Description
+                "description" => $message,
+
+                // URL of title link
+                "url" => WPF()->post->get_post_url($postid),
+
+                // Timestamp of embed must be formatted as ISO8601
+                "timestamp" => $timestamp,
+
+                // Embed left border color in HEX
+                "color" => hexdec( "3366ff" ),
+
+                // Author
+                "author" => [
+                    "name" => (WPF()->current_user['display_name'] ? WPF()->current_user['display_name'] : urldecode(WPF()->current_user['user_nicename'])),
+                    "url" => WPF()->current_user['profile_url']
+                ]
+            ]
+        ]
+
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+
+
+    $ch = curl_init( $webhookurl );
+    curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+    curl_setopt( $ch, CURLOPT_POST, 1);
+    curl_setopt( $ch, CURLOPT_POSTFIELDS, $json_data);
+    curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt( $ch, CURLOPT_HEADER, 0);
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1);
+
+    $response = curl_exec( $ch );
+    echo $response;
+    curl_close( $ch );
+
+    WPF()->notice->add('Message has been sent', 'success');
+    WPF()->notice->add('Message has been sent', 'success');
+	echo json_encode( WPF()->notice->get_notices() );
+	exit();
+}

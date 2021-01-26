@@ -79,7 +79,7 @@ $css_classes = trim(implode(' ', array_filter(array_unique($css_classes))));
                             //Search on the Wiki (foundryvtt.wiki)
                             $client = new Client(
                                 'https://foundryvtt.wiki/graphql/',
-                                ['Authorization' => "Bearer $wikiAPIToken"]
+                                ['Authorization' => "Bearer ".WIKI_API_TOKEN]
                             );
 
                             $gql = (new Query('pages'))

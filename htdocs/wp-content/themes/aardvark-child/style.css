@@ -659,3 +659,8 @@ button.forge-oauth span {
 #wpadminbar #wp-admin-bar-site-name>.ab-item:before{
   content:url("https://assets.foundryvtt-hub.com/wp-content/themes/aardvark-child/images/foundryhublogo_symbol.png");
 }
+
+/*reduce oembed size on forum*/
+#wpforo #wpforo-wrap .wpforo-post-content .wpf-oembed-wrap{
+  max-width:50%;
+}

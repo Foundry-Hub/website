@@ -52,15 +52,15 @@ class Forge {
         this.pkg = this.packages.find(p => p.name === singlePackage.package.name);
         if (this.pkg) {
             if (singlePackage.package.latest == this.pkg.installed) { //already installed and uptodate
-                $("#forge-download").attr("disabled", "disabled").find("span").text("Already installed!");
+                jQuery("#forge-download").attr("disabled", "disabled").find("span").text("Already installed!");
                 this.showForgeMessage("info", `Don't forget to <a href="https://forge-vtt.com/setup" target="_blank">restart</a> your server if you can't see this package.`);
             } else { //installed to a different version than latest, guessing "update"
-                $("#forge-download").find("span").text("Update available");
+                jQuery("#forge-download").find("span").text("Update available");
             }
         } else {
             this.pkg = singlePackage.package;
         }
-        $("#forge-download-container").css("display", "block");
+        jQuery("#forge-download-container").css("display", "block");
     }
     async installPackageDependencies(dependencies) {
         const missing = dependencies.filter(dep => !this.packages.find(p => p.installed && p.type === (dep.type || 'module') && p.name === dep.name));
@@ -80,7 +80,7 @@ class Forge {
                 installed++;
             }
         }
-        this.showForgeMessage('info', `Installed ${installed} package dependencies: ${missingNames.join(", ")}`);
+        this.showForgeMessage('info', `Installed jQuery{installed} package dependencies: jQuery{missingNames.join(", ")}`);
         return installed;
     }
     async installPackageFromManifest(type, name, manifest) {

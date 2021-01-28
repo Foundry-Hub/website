@@ -1,0 +1,29 @@
+<div class="creators-row">
+    <div class="creators-row-left" style="background-image:linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url({{cover}})">
+        <h1 class="creators-name">{{post_title}}</h1>
+        <div class="creators-banner-left">
+            <div class="creators-banner-endorsement">
+                <i class="fas fa-thumbs-up"></i>
+                <div class="creators-banner-title">Endorsement</div>
+                <div class="creators-endorse-count">{{endorsements}}</div>
+            </div>
+            <div class="creators-banner-comments">
+                <i class="fas fa-comment-dots"></i>
+                <div class="creators-banner-title">Comments</div>
+                <div>{{comment_count}}</div>
+            </div>
+        </div>
+    </div>
+    <div class="creators-row-right">
+        <div class="creators-excerpt">
+            {{{excerpt}}}
+        </div>
+        <div class="creators-tags">
+            {{#each creator_tags}}
+            <div>
+                <a href="/creators/?_sft_creator_tags={{slug}}"><i class="fas fa-tag"></i> {{name}}</a>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</div>

@@ -13,7 +13,7 @@
         <div class="pkg-banner-left">
             <div class="pkg-banner-endorsement">
                 <i class="fas fa-thumbs-up"></i>
-                <div class="pkg-banner-title">Endorsement</div>
+                <div class="pkg-banner-title">Endorsements</div>
                 <div class="pkg-endorse-count">{{nbEndorsements}}</div>
             </div>
             {{#if installs_supported}}
@@ -88,12 +88,12 @@
 </div>
 {{/loopedVideos}}
 {{/if}}
-{{#if package.tags}}
+{{#if tags}}
 <div class="pkg-tag-list">
     <h2>Tags</h2>
     <ul>
-        {{#each package.tags}}
-            <a href="/packages/?_sft_post_tag={{#slugify .}}"><li class="pkg-tag"><i class="fas fa-tag"></i>{{.}}</li></a>
+        {{#each tags}}
+            <a href="/packages/?_sft_package_tags={{slug}}"><li class="pkg-tag"><i class="fas fa-tag"></i>{{name}}</li></a>
         {{/each}}
     </ul>
 </div>

@@ -1,7 +1,7 @@
 <?php
 /* Template Name: Creator Browser */
 get_header();
-
+add_filter( 'excerpt_length', function( $length ) { return 30; } );
 /**
  * Get settings
  *
@@ -12,10 +12,10 @@ if ( $settings &&  is_array( $settings ) ) {
 } 
 
 $compiler = getHandleBars();
-$templateName = "packages-list";
+$templateName = "creator-list";
 
-$args = array('post_type' => 'package');
-$args['search_filter_id'] = 100000773;
+$args = array('post_type' => 'creator');
+$args['search_filter_id'] = 100001901;
 $query = new WP_Query($args);
 
 ?>
@@ -30,69 +30,30 @@ $query = new WP_Query($args);
 
 	<div id="gp-inner-container">
 		<div id="gp-content">
-			<div id="pkgs-list">
+			<div id="creators-list">
 				<?php
 					if ( $query->have_posts() )
 					{
 						?>
 						<div class="pkgs-results-number">
-							Found <?php echo $query->found_posts; ?> packages
+							Found <?php echo $query->found_posts; ?> creators
 						</div>
-						<div id="pkgs-box-container">
+						<div id="creators-container">
 						<?php
 						while ($query->have_posts())
 						{
 							$query->the_post();
 							$post = get_post();
 
-							$date_updated = new DateTime();
-							$date_updated->setTimestamp($post->updated/1000);
-							$date_created = new DateTime();
-							$date_created->setTimestamp($post->created/1000);
-
-							$cover = "/wp-content/themes/aardvark-child/images/nocover.webp";
-							$coverSize = "cover";
-							if($post->cover){
-								$cover = $post->cover;
-								$coverSize = "cover";
-							} elseif ($post->icon){
-								$cover = $post->icon;
-								$coverSize = "contain";
-							}
-
-							$premium = $post->premium ? $post->premium : null;
-
-							switch ($post->type) {
-								case "world":
-									$typeIcon = "fa-globe";
-									break;
-								case "system":
-									$typeIcon = "fa-dice-d20";
-									break;
-								default:
-									$typeIcon = "fa-puzzle-piece";
-							}
-
 							$elements = [
-								"type" => $post->type,
-								"typeIcon" => $typeIcon,
-								"library" => $post->library,
-								"name" => $post->post_name,
-								"title" => html_entity_decode($post->post_title),
-								"created" => $date_created->format('d M Y'),
-								"updated" => $date_updated->format('d M Y'),
-								"nbAuthors" => count($post->author),
-								"authors" => implode(", ", $post->author),
-								"description" => strip_tags(html_entity_decode($post->post_content)),
-								"installs" => $post->installs,
-								"endorsements" => $post->endorsements,
-								"nbComments" => get_comments_number(),
-								"url"=>$cover,
-								"coverSize"=>$coverSize,
-								"premium" => $premium,
-								"installs_supported" => !($premium == "protected")
+								"post_title" => $post->post_title,
+								"endorsements" => get_field("endorsements"),
+								"comment_count" => $post->comment_count,
+								"excerpt" => get_the_excerpt(),
+								"creator_tags" => get_the_terms(get_the_ID(), "creator_tags"),
+								"cover" => wp_get_attachment_url(get_post_thumbnail_id())
 							];
-							echo $compiler->render("package-box", $elements);
+							echo $compiler->render("creator-row", $elements);
 						}
 						?>
 						</div>

@@ -12,7 +12,6 @@ if ( $settings &&  is_array( $settings ) ) {
 } 
 
 $compiler = getHandleBars();
-$templateName = "packages-list";
 
 $args = array('post_type' => 'package');
 $args['search_filter_id'] = 100000773;

@@ -132,36 +132,7 @@ function getHandleBars()
 }
 
 /**
- * Trick the 404 redirection from WP into loading the single-package view
- * TODO: Evaluate if this still needed after https://github.com/League-of-Foundry-Developers/foundry-hub/issues/10 ?
- */
-add_filter('template_include', 'package_404_redirect');
-function package_404_redirect($template)
-{
-    global $wp_query;
-    if (is_404() && get_query_var('package')) {
-        status_header(200);
-        $wp_query->is_404 = false;
-        $new_template = locate_template(array('single-package.php'));
-        if ('' != $new_template) {
-            return $new_template;
-        }
-    }
-    return $template;
-}
-
-/**
- * Remove the admin bar if the user isn't logged
- */
-add_action('after_setup_theme', 'remove_admin_bar');
-function remove_admin_bar()
-{
-    show_admin_bar(is_user_logged_in());
-}
-
-/**
  * Get the metadata stored for a 1:1 post/user join
-
  */
 function get_post_user_meta($post_id, $user_id, $key = '', $force = false)
 {
@@ -320,7 +291,9 @@ function cron_package_update_all()
                 }
 
                 $tags = array_values($pkg['tags']);
-
+                foreach($tags as &$tag){
+                    $tag = sanitize_title($tag);
+                }
                 //from the "manifest" file
                 $requestManifest = wp_remote_get('https://eu.forge-vtt.com/api/bazaar/manifest/' . $pkg['name'] . '?manifest=1');
                 if (!is_wp_error($request)) {
@@ -375,7 +348,7 @@ function cron_package_update_all()
                             'comment_status' => 'open',
                             'ping_status' => 'closed',
                             'post_name' => sanitize_title($pkg['name']),
-                            'tags_input' => $tags,
+                            //'tags_input' => $tags,
                             'meta_input' => $meta,
                         )
                     );
@@ -386,12 +359,16 @@ function cron_package_update_all()
                         'post_title' => $pkg['title'],
                         'post_content' => $pkg['short_description'],
                         'post_status' => 'publish',
-                        'tags_input' => $tags,
+                        //'tags_input' => $tags,
+                        'tax-input' => array( 
+                            'package_tags' => $tags
+                        ),
                         'meta_input' => $meta,
                     );
 
                     wp_update_post($data);
                 }
+                wp_set_object_terms($post_id, $tags, 'package_tags');
             }
         }
         //Once we're done, we save the max update value

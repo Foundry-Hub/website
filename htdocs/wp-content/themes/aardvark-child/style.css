@@ -720,6 +720,7 @@ button.forge-oauth span {
   position: relative;
   border-bottom: 1px solid #cccccc;
   margin-bottom: 15px;
+  cursor:pointer;
 }
 
 #creators-container {

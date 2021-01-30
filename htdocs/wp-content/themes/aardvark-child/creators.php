@@ -51,7 +51,8 @@ $query = new WP_Query($args);
 								"comment_count" => $post->comment_count,
 								"excerpt" => get_the_excerpt(),
 								"creator_tags" => get_the_terms(get_the_ID(), "creator_tags"),
-								"cover" => wp_get_attachment_url(get_post_thumbnail_id())
+								"cover" => wp_get_attachment_url(get_post_thumbnail_id()),
+								"url" => get_permalink()
 							];
 							echo $compiler->render("creator-row", $elements);
 						}
@@ -79,5 +80,11 @@ $query = new WP_Query($args);
 	<div class="gp-clear"></div>
 
 </div>
-
+<script type="text/javascript">
+	jQuery(document).ready(function () {
+		jQuery(document).on("click",".creators-row",function(){
+			window.location.href = jQuery(this).data("url");
+		});
+	});
+</script>
 <?php get_footer();

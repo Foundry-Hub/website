@@ -833,3 +833,11 @@ button.forge-oauth span {
   background-color:white;
   color:#307C35;
 }
+
+.fhub-link-image .uagb-ifb-image{
+  height:50px;
+}
+
+button.btn_archives {
+  width: 100%;
+}

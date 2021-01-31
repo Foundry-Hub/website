@@ -637,3 +637,12 @@ function webp_is_displayable($result, $path) {
     return $result;
 }
 add_filter('file_is_displayable_image', 'webp_is_displayable', 10, 2);
+
+/**
+ * Add flairs to topics (WIP)
+ * Waiting for plugin update
+ */
+/*function add_topics_flair($topics){
+    return $topics;
+}
+add_filter('wpforo_get_topics','add_topics_flair');*/

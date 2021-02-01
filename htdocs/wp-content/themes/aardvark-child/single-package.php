@@ -49,9 +49,11 @@ if (is_null($post_id)) {
 
     //sort the languages
     $languages = $meta['languages'];
-    usort($languages, function ($item1, $item2) {
-        return $item1['name'] <=> $item2['name'];
-    });
+    if(!empty($languages) && is_array($languages)){
+        usort($languages, function ($item1, $item2) {
+            return $item1['name'] <=> $item2['name'];
+        });
+    }
 
     $authors = $meta['authors_full'];
     if(!is_array($authors))

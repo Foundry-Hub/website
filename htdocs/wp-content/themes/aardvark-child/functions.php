@@ -731,3 +731,13 @@ function admin_bar_control_function() {
     }
 }
 add_action('init', 'admin_bar_control_function', 20);
+
+/**
+ * Fix 404 title on Activate page
+ */
+add_filter( 'rank_math/frontend/title', function( $title ) {
+    if ( bp_is_current_component( 'activate' ) ) {
+      return '';
+    }
+    return $title;
+});

@@ -2,7 +2,7 @@
 .user-role-contributor .components-panel__body:nth-of-type(2),
 .user-role-contributor .components-panel__body:nth-of-type(7),
 .user-role-contributor .gp-postbox-post-format,
-.user-role-contributor #gp-general
+.user-role-contributor #gp-general,
 .user-role-contributor #toplevel_page_pp-calendar{
     display:none;
 }
@@ -20,4 +20,8 @@
 /* Width of "full-wide" blocks */
 .wp-block[data-align="full"] {
     max-width: none;
-}	
+}
+
+.edit-post-layout__metaboxes{
+    padding-bottom:15px;
+}

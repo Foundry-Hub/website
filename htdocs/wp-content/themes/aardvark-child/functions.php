@@ -646,3 +646,88 @@ add_filter('file_is_displayable_image', 'webp_is_displayable', 10, 2);
     return $topics;
 }
 add_filter('wpforo_get_topics','add_topics_flair');*/
+
+/**
+ * Generate Package Box
+ * @return Array $elements
+ */
+function package_box_generate_data($post){
+    $date_updated = new DateTime();
+    $date_updated->setTimestamp($post->updated/1000);
+    $date_created = new DateTime();
+    $date_created->setTimestamp($post->created/1000);
+
+    $cover = "/wp-content/themes/aardvark-child/images/nocover.webp";
+    $coverSize = "cover";
+    if($post->cover){
+        $cover = $post->cover;
+        $coverSize = "cover";
+    } elseif ($post->icon){
+        $cover = $post->icon;
+        $coverSize = "contain";
+    }
+
+    $premium = $post->premium ? $post->premium : null;
+
+    switch ($post->type) {
+        case "world":
+            $typeIcon = "fa-globe";
+            break;
+        case "system":
+            $typeIcon = "fa-dice-d20";
+            break;
+        default:
+            $typeIcon = "fa-puzzle-piece";
+    }
+
+    $elements = [
+        "type" => $post->type,
+        "typeIcon" => $typeIcon,
+        "library" => $post->library,
+        "name" => $post->post_name,
+        "title" => html_entity_decode($post->post_title),
+        "created" => $date_created->format('d M Y'),
+        "updated" => $date_updated->format('d M Y'),
+        "nbAuthors" => count($post->author),
+        "authors" => implode(", ", $post->author),
+        "description" => strip_tags(html_entity_decode($post->post_content)),
+        "installs" => $post->installs,
+        "endorsements" => $post->endorsements,
+        "nbComments" => $post->comment_count,
+        "url"=>$cover,
+        "coverSize"=>$coverSize,
+        "premium" => $premium,
+        "installs_supported" => !($premium == "protected")
+    ];
+    return $elements;
+}
+
+/**
+ * Generate Creator Box
+ * @return Array $elements
+ */
+function creator_box_generate_data($post){
+    $elements = [
+        "post_title" => $post->post_title,
+        "endorsements" => get_field("endorsements", $post->ID),
+        "comment_count" => $post->comment_count,
+        "excerpt" => get_the_excerpt($post),
+        "creator_tags" => get_the_terms($post->ID, "creator_tags"),
+        "cover" => wp_get_attachment_url(get_post_thumbnail_id($post)),
+        "url" => get_permalink($post)
+    ];
+    return $elements;
+}
+
+/**
+ * Show admin bar for team members
+ */
+function admin_bar_control_function() {
+    $user = wp_get_current_user();
+    if ( !is_user_logged_in() || in_array( 'contributor', (array) $user->roles ) ) {
+        show_admin_bar(false);
+    } else {
+        show_admin_bar(true);
+    }
+}
+add_action('init', 'admin_bar_control_function', 20);

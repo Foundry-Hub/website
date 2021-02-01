@@ -841,3 +841,35 @@ button.forge-oauth span {
 button.btn_archives {
   width: 100%;
 }
+
+.creatorbox .pkgbox-cover{
+  background-size: cover;
+  overflow: hidden;
+}
+
+.creators-box-tags{
+  position: relative;
+  bottom: 0;
+  color: white;
+  text-transform: uppercase;
+  font-size: 12px;
+  line-height: 18px;
+  padding: 5px;
+  background: #306E7C;
+  display: inline-block;
+  margin-top: 116px;
+}
+
+.related-items{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 10px;
+  row-gap: 10px;
+}
+
+#related-items-wrapper{
+  position: relative;
+  width: 100%;
+  clear: both;
+  margin-top: 60px;
+}

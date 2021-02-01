@@ -14,23 +14,15 @@
             </div>
         </div>
         <div class="pkg-banner-right">
-            {{#if patreon}}
-            <a href="{{patreon}}" target="_blank">
-                <button class="pkg-download">
-                    <i class="fab fa-patreon"></i>
-                    Patreon
+            {{#if editURL}}
+            <a href="{{{editURL}}}" target="_blank">
+                <button class="creator-edit">
+                    <i class="far fa-edit"></i>
+                    Edit
                 </button>
             </a>
             {{/if}}
-            {{#if website}}
-            <a href="{{website}}" target="_blank">
-                <button class="pkg-download">
-                    <i class="fas fa-external-link-square-alt"></i>
-                    Website
-                </button>
-            </a>
-            {{/if}}
-            <button {{endorsementDisabled}} data-postid="{{postID}}" class="pkg-endorse {{#if loggedOut}}pkg-login{{/if}}">
+            <button {{endorsementDisabled}} data-postid="{{creator.ID}}" class="pkg-endorse {{#if loggedOut}}pkg-login{{/if}}">
                 <i class="fas fa-thumbs-up"></i>
                 {{endorsementText}}
             </button>

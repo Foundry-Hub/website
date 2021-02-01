@@ -94,7 +94,8 @@ $elements = [
     "endorsementDisabled" => $canEndorse ? '' : 'disabled="disabled"',
     "endorsementText" => $canEndorse ? "Endorse" : "Endorsed!",
 	"screenshots" => $showcase,
-	"creator_tags" => get_the_terms(get_the_ID(), "creator_tags")
+	"creator_tags" => get_the_terms(get_the_ID(), "creator_tags"),
+	"editURL" => get_edit_post_link()
 ];
 
 ?>
@@ -110,14 +111,14 @@ $elements = [
 		<div id="pkg-single">
 
 			<?php
-echo $compiler->render("single-creator", $elements);
+			echo $compiler->render("single-creator", $elements);
 
-if (function_exists('ghostpool_share_icons') && 'enabled' === ghostpool_option('page_share_icons')) {
-    echo ghostpool_share_icons();
-}
+			if (function_exists('ghostpool_share_icons') && 'enabled' === ghostpool_option('page_share_icons')) {
+				echo ghostpool_share_icons();
+			}
 
-comments_template();
-?>
+			comments_template();
+			?>
 		</div>
 
 	</div>

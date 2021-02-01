@@ -1,0 +1,19 @@
+<div class="pkgbox creatorbox">
+    <a href="{{url}}" class="pkgbox-cover" style="background-image:url({{cover}});">
+        {{#each creator_tags}}
+            <div class="creators-box-tags">
+                <i class="fas fa-tag"></i> {{name}}
+            </div>
+        {{/each}}
+    </a>
+    <div class="pkgbox-content">
+        <h3><a href="{{url}}">{{post_title}}</a></h3>
+        <div class="pkgbox-info">
+            <div class="pkgbox-description">{{{excerpt}}}</div>
+        </div>
+    </div>
+    <div class="pkgbox-footer">
+        <span><i class="fas fa-thumbs-up"></i>  {{endorsements}}</span>
+        <span><i class="fas fa-comment-dots"></i>  {{comment_count}}</span>
+    </div>
+</div>

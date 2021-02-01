@@ -45,15 +45,7 @@ $query = new WP_Query($args);
 							$query->the_post();
 							$post = get_post();
 
-							$elements = [
-								"post_title" => $post->post_title,
-								"endorsements" => get_field("endorsements"),
-								"comment_count" => $post->comment_count,
-								"excerpt" => get_the_excerpt(),
-								"creator_tags" => get_the_terms(get_the_ID(), "creator_tags"),
-								"cover" => wp_get_attachment_url(get_post_thumbnail_id()),
-								"url" => get_permalink()
-							];
+							$elements = creator_box_generate_data($post);
 							echo $compiler->render("creator-row", $elements);
 						}
 						?>

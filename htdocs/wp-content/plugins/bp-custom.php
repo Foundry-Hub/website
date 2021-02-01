@@ -52,11 +52,15 @@ function bp_autologin_on_activation( $user_id, $key, $user ) {
 	bp_core_add_message( __( 'Your account is now active!', 'buddypress' ) );
 
 	$bp->activation_complete = true;
-	//now login and redirect
+    //now login and redirect
+    
+    if(headers_sent())
+        throw new \ErrorException('Headers already sent');
 
-	wp_set_auth_cookie( $user_id, true, false );
+	wp_set_auth_cookie( $user_id, true );
 
 	bp_core_redirect( apply_filters( 'bpdev_autoactivate_redirect_url', get_home_url(), $user_id ) );
 }
 
 add_action( 'bp_core_activated_user', 'bp_autologin_on_activation', 40, 3 );
+

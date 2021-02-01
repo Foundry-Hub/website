@@ -20,4 +20,8 @@
 /* Width of "full-wide" blocks */
 .wp-block[data-align="full"] {
     max-width: none;
-}	
+}
+
+.edit-post-layout__metaboxes{
+    padding-bottom:15px;
+}

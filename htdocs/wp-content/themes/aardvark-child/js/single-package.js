@@ -85,4 +85,23 @@ jQuery(document).ready(function () {
             }
         });
     });
+
+    jQuery('#tabs li a:not(:first)').addClass('inactive');
+    jQuery('.tab_container').hide();
+    jQuery('.tab_container:first').show();
+    jQuery('#tabs li a').click(function(){
+        var t = jQuery(this).attr('href');
+        jQuery('#tabs li a').addClass('inactive');        
+        jQuery(this).removeClass('inactive');
+        jQuery('.tab_container').hide();
+        jQuery(t).fadeIn('slow');
+        return false;
+    })
+
+    if(jQuery(this).hasClass('inactive')){ //this is the start of our condition 
+        jQuery('#tabs li a').addClass('inactive');         
+        jQuery(this).removeClass('inactive');
+        jQuery('.tab_container').hide();
+        jQuery(t).fadeIn('slow');    
+    }
 });

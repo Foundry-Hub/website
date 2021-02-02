@@ -21,7 +21,7 @@ deploy_prod:
   script:
     - chmod og= $SSH_PRIVATE_KEY
     - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $DEPLOY_USER@$PROD1_IP "cd /opt/bitnami/apps/wordpress && git checkout production && git pull && exit"
-    - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $DEPLOY_USER@$PROD1_IP "cd /opt/bitnami/apps/wordpress && wp config set FHUB_RELEASE_TIMESTAMP $CI_COMMIT_TIMESTAMP"
+    - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $DEPLOY_USER@$PROD1_IP "cd /opt/bitnami/apps/wordpress && wp config set FHUB_RELEASE_TIMESTAMP $CI_PIPELINE_ID"
     - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $DEPLOY_USER@$PROD1_IP "cd /opt/bitnami/apps/wordpress && wp w3-total-cache flush all"
   environment:
     name: production

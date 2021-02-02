@@ -1,7 +1,7 @@
 <?php
 /* Template Name: Package Single View */
-wp_enqueue_style('lightgallery', get_stylesheet_directory_uri() . '/css/lightgallery.css');
-wp_enqueue_style('jquery-modal', get_stylesheet_directory_uri() . '/css/modal.css');
+wp_enqueue_style('lightgallery', get_stylesheet_directory_uri() . '/css/lightgallery.css', [], FHUB_RELEASE_TIMESTAMP);
+wp_enqueue_style('jquery-modal', get_stylesheet_directory_uri() . '/css/modal.css', [], FHUB_RELEASE_TIMESTAMP);
 get_header();
 
 /**
@@ -221,6 +221,27 @@ if (is_null($post_id)) {
         default:
             $typeIcon = "fa-puzzle-piece";
     }
+    ob_start();
+    comments_template();
+    $commentsHTML = ob_get_clean();
+
+    $relatedPostObject = get_posts(array(
+        'post_type' => 'post',
+        'meta_query' => array(
+            array(
+                'key' => 'related_items', // name of custom field
+                'value' => '"' . get_the_ID() . '"', // matches exactly "123", not just 123. This prevents a match for "1234"
+                'compare' => 'LIKE'
+            )
+        )
+    ));
+
+    add_filter( 'excerpt_length', function( $length ) { return 30; } );
+    $relatedPostElements = [];
+    foreach($relatedPostObject as $related){
+        $relatedPostElements[] = post_box_generate_data($related);
+    }
+
     $elements = [
         "postID" => get_the_ID(),
         "loggedOut" => get_current_user_id() === 0,
@@ -249,6 +270,9 @@ if (is_null($post_id)) {
         "filesize" => $filesize,
         "dependencies" => $dependencies,
         "typeIcon" => $typeIcon,
+        "comments" => $commentsHTML,
+        "relatedPost" => $relatedPostElements,
+        "nbRelatedPost" => count($relatedPostElements)
     ];
     $elements["gallery"] = $elements["screenshots"] || $elements["videos"];
     $templateName = "single-package";
@@ -280,7 +304,7 @@ if (empty($_SESSION['forge_accesstoken'])) {
             <div id="pkg-single">
                 <?php
                 echo $compiler->render($templateName, $elements);
-                comments_template();
+                
                 ?>
             </div>
 	</div>
@@ -292,8 +316,8 @@ if (empty($_SESSION['forge_accesstoken'])) {
 </div>
 
 <?php
-wp_enqueue_script('lightgallery-js', get_stylesheet_directory_uri() . '/js/lightgallery.min.js', array('jquery'), '', true);
-wp_enqueue_script('jquery-modal-js', get_stylesheet_directory_uri() . '/js/jquery-modal.min.js');
-wp_enqueue_script('package-single-js', get_stylesheet_directory_uri() . '/js/single-package.js');
-wp_enqueue_script('forge-js', get_stylesheet_directory_uri() . '/js/forge.js');
+wp_enqueue_script('lightgallery-js', get_stylesheet_directory_uri() . '/js/lightgallery.min.js', array('jquery'), FHUB_RELEASE_TIMESTAMP, true);
+wp_enqueue_script('jquery-modal-js', get_stylesheet_directory_uri() . '/js/jquery-modal.min.js', [], FHUB_RELEASE_TIMESTAMP);
+wp_enqueue_script('package-single-js', get_stylesheet_directory_uri() . '/js/single-package.js', [], FHUB_RELEASE_TIMESTAMP);
+wp_enqueue_script('forge-js', get_stylesheet_directory_uri() . '/js/forge.js', [], FHUB_RELEASE_TIMESTAMP);
 get_footer();

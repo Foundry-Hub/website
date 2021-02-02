@@ -661,6 +661,12 @@ button.forge-oauth span {
   font-weight: 400;
 }
 
+.gp-notification-link .gp-menu-text {
+  font-size: 15px;
+  font-weight: 400;
+  padding: 8px 15px !important;
+}
+
 .h-captcha{
   width:303px;
 }

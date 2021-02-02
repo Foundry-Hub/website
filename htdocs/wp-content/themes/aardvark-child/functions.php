@@ -15,8 +15,12 @@ use Handlebars\Loader\FilesystemLoader;
 if (!function_exists('ghostpool_enqueue_child_styles')) {
     function ghostpool_enqueue_child_styles()
     {
+        if(defined('FHUB_RELEASE_TIMESTAMP'))
+            $version = FHUB_RELEASE_TIMESTAMP;
+        else
+            $version = AARDVARK_THEME_VERSION;
         wp_enqueue_style('ghostpool-style', get_template_directory_uri() . '/style.css', array(), AARDVARK_THEME_VERSION);
-        wp_enqueue_style('ghostpool-child-style', get_stylesheet_directory_uri() . '/style.css', array('ghostpool-style'), AARDVARK_THEME_VERSION);
+        wp_enqueue_style('ghostpool-child-style', get_stylesheet_directory_uri() . '/style.css', array('ghostpool-style'), $version);
         wp_style_add_data('ghostpool-child-style', 'rtl', 'replace');
     }
 }

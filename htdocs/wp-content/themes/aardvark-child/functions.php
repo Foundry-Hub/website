@@ -15,12 +15,11 @@ use Handlebars\Loader\FilesystemLoader;
 if (!function_exists('ghostpool_enqueue_child_styles')) {
     function ghostpool_enqueue_child_styles()
     {
-        if(defined('FHUB_RELEASE_TIMESTAMP'))
-            $version = FHUB_RELEASE_TIMESTAMP;
-        else
-            $version = AARDVARK_THEME_VERSION;
+        if(!defined('FHUB_RELEASE_TIMESTAMP'))
+            define('FHUB_RELEASE_TIMESTAMP', AARDVARK_THEME_VERSION);
+
         wp_enqueue_style('ghostpool-style', get_template_directory_uri() . '/style.css', array(), AARDVARK_THEME_VERSION);
-        wp_enqueue_style('ghostpool-child-style', get_stylesheet_directory_uri() . '/style.css', array('ghostpool-style'), $version);
+        wp_enqueue_style('ghostpool-child-style', get_stylesheet_directory_uri() . '/style.css', array('ghostpool-style'), FHUB_RELEASE_TIMESTAMP);
         wp_style_add_data('ghostpool-child-style', 'rtl', 'replace');
     }
 }
@@ -719,6 +718,27 @@ function creator_box_generate_data($post){
         "creator_tags" => get_the_terms($post->ID, "creator_tags"),
         "cover" => wp_get_attachment_url(get_post_thumbnail_id($post)),
         "url" => get_permalink($post)
+    ];
+    return $elements;
+}
+
+/**
+ * Generate News Box
+ */
+function post_box_generate_data($post){    
+    $categories = array_column(get_the_category($post->ID), 'name');
+
+    $elements = [
+        'ID' => $post->ID,
+        'title' => $post->post_title,
+        'url' => get_permalink($post->ID),
+        'image' => wp_get_attachment_url(get_post_thumbnail_id($post->ID)),
+        'datetime' => get_the_date( 'c', $post->ID),
+        'datestr' => get_the_time( get_option( 'date_format' ), $post->ID),
+        'comments' => $post->comment_count,
+        'author' => ghostpool_author_name($post->ID),
+        'excerpt' => get_the_excerpt($post->ID),
+        'categories' => $categories
     ];
     return $elements;
 }

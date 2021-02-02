@@ -55,6 +55,25 @@
         {{/each}}
     </div>
     <div class="pkg-right-column">
-        {{{creator.post_content}}}
+        <ul id="tabs">
+            <li><a href="#tab_description"><i class="fas fa-file-alt"></i> Description</a></li>
+            <li><a href="#tab_comments"><i class="fas fa-comment"></i> Comments <span class="tab-count">({{creator.comment_count}})</span></a></li>
+            {{#if relatedPost}}
+            <li><a href="#tab_related"><i class="far fa-newspaper"></i> Related News <span class="tab-count">({{nbRelatedPost}})</span></a></li>
+            {{/if}}
+        </ul>
+        <div class="tab_container" id="tab_description">
+            {{{creator.post_content}}}
+        </div>
+        <div class="tab_container" id="tab_comments">
+            {{{comments}}}
+        </div>
+        <div class="tab_container" id="tab_related">
+            <div class="related-items">
+                {{#each relatedPost}}
+                    {{> single-box}}
+                {{/each}}
+            </div>
+        </div>
     </div>
 </div>

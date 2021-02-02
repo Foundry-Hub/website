@@ -193,8 +193,29 @@
         </table>
     </div>
     <div class="pkg-right-column">
-        <h2>Description</h2>
-        <p>{{{package.description_full}}}</p>
+        <ul id="tabs">
+            <li><a href="#tab_description"><i class="fas fa-file-alt"></i> Description</a></li>
+            <li><a href="#tab_comments"><i class="fas fa-comment"></i> Comments <span class="tab-count">({{nbComments}})</span></a></li>
+            {{#if relatedPost}}
+            <li><a href="#tab_related"><i class="far fa-newspaper"></i> Related News <span class="tab-count">({{nbRelatedPost}})</span></a></li>
+            {{/if}}
+            {{#if forum_link}}
+            <li><a href="{{forum_link}}" target="_blank"><i class="fas fa-comments"></i> Forum</a></li>
+            {{/if}}
+        </ul>
+        <div class="tab_container" id="tab_description">
+            {{{package.description_full}}}
+        </div>
+        <div class="tab_container" id="tab_comments">
+            {{{comments}}}
+        </div>
+        <div class="tab_container" id="tab_related">
+            <div class="related-items">
+                {{#each relatedPost}}
+                    {{> single-box}}
+                {{/each}}
+            </div>
+        </div>
     </div>
 </div>
 <div style="display:none;">

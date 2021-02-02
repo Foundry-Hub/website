@@ -1,6 +1,6 @@
 <?php
 /* Template Name: Creator Single View*/
-wp_enqueue_style('lightgallery', get_stylesheet_directory_uri() . '/css/lightgallery.css');
+wp_enqueue_style('lightgallery', get_stylesheet_directory_uri() . '/css/lightgallery.css', [], FHUB_RELEASE_TIMESTAMP);
 get_header();
 
 $compiler = getHandleBars();
@@ -86,6 +86,27 @@ if (have_rows('links')) {
     endwhile;
 }
 
+ob_start();
+comments_template();
+$commentsHTML = ob_get_clean(); 
+
+$relatedPostObject = get_posts(array(
+	'post_type' => 'post',
+	'meta_query' => array(
+		array(
+			'key' => 'related_items', // name of custom field
+			'value' => '"' . get_the_ID() . '"', // matches exactly "123", not just 123. This prevents a match for "1234"
+			'compare' => 'LIKE'
+		)
+	)
+));
+
+add_filter( 'excerpt_length', function( $length ) { return 30; } );
+$relatedPostElements = [];
+foreach($relatedPostObject as $related){
+	$relatedPostElements[] = post_box_generate_data($related);
+}
+
 $elements = [
     "creator" => $creator,
 	"links" => $links,
@@ -95,7 +116,10 @@ $elements = [
     "endorsementText" => $canEndorse ? "Endorse" : "Endorsed!",
 	"screenshots" => $showcase,
 	"creator_tags" => get_the_terms(get_the_ID(), "creator_tags"),
-	"editURL" => get_edit_post_link()
+	"editURL" => get_edit_post_link(),
+	"comments" => $commentsHTML,
+	"relatedPost" => $relatedPostElements,
+    "nbRelatedPost" => count($relatedPostElements)
 ];
 
 ?>
@@ -112,12 +136,6 @@ $elements = [
 
 			<?php
 			echo $compiler->render("single-creator", $elements);
-
-			if (function_exists('ghostpool_share_icons') && 'enabled' === ghostpool_option('page_share_icons')) {
-				echo ghostpool_share_icons();
-			}
-
-			comments_template();
 			?>
 		</div>
 
@@ -130,6 +148,6 @@ $elements = [
 </div>
 
 <?php
-wp_enqueue_script('lightgallery-js', get_stylesheet_directory_uri() . '/js/lightgallery.min.js', array('jquery'), '', true);
-wp_enqueue_script('package-single-js', get_stylesheet_directory_uri() . '/js/single-package.js');
+wp_enqueue_script('lightgallery-js', get_stylesheet_directory_uri() . '/js/lightgallery.min.js', array('jquery'), FHUB_RELEASE_TIMESTAMP, true);
+wp_enqueue_script('package-single-js', get_stylesheet_directory_uri() . '/js/single-package.js', [], FHUB_RELEASE_TIMESTAMP);
 get_footer();

@@ -644,9 +644,21 @@ button.forge-oauth span {
   content: '\f075' !important;
 }
 
-/* Disable header login icon*/
-.gp-header-buttons .gp-profile-button{
-  display:none;
+.gp-profile-tab::before {
+  content: '\f007';
+}
+
+.gp-notifications-tab::before {
+  content: '\f0f3';
+}
+
+#gp-profile-menu .gp-standard-menu a {
+  font-size: 15px;
+  padding: 6px 20px;
+}
+.gp-notification-link a {
+  font-size: 15px;
+  font-weight: 400;
 }
 
 .h-captcha{

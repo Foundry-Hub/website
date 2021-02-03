@@ -175,7 +175,7 @@ function set_post_user_meta($post_id, $user_id, $key = '', $value = '')
 
     $wpdb->query(
         $wpdb->prepare(
-            "INSERT INTO wp_posts_users_meta VALUES (%d, %d, %s, %s) ON DUPLICATE KEY UPDATE meta_value = %s",
+            "INSERT INTO wp_posts_users_meta VALUES (%d, %d, %s, %s, NOW()) ON DUPLICATE KEY UPDATE meta_value = %s, updated = NOW()",
             $post_id,
             $user_id,
             $key,
@@ -183,7 +183,6 @@ function set_post_user_meta($post_id, $user_id, $key = '', $value = '')
             $value
         )
     );
-    wp_cache_set($post_id . "_" . $user_id . "_" . $key, $value, '', 60 * 60);
     return true;
 }
 
@@ -209,9 +208,21 @@ function package_endorse()
 
     if (!$endorsed) {
         set_post_user_meta($post_id, $user_id, "endorsed", true);
+
         $count = (int) get_post_meta($post_id, "endorsements", true);
-        $count++;
-        update_post_meta($post_id, "endorsements", $count);
+        $count_week = (int) get_post_meta($post_id, "endorsements_week", true);
+        $count_month = (int) get_post_meta($post_id, "endorsements_month", true);
+
+        $metaValues = array(
+            'endorsements'      => ++$count,
+            'endorsements_week' => ++$count_week,
+            'endorsements_month'=> ++$count_month
+        );
+        
+        wp_update_post(array(
+            'ID'        => $post_id,
+            'meta_input'=> $metaValues,
+        ));
     }
     wp_die();
 }
@@ -327,6 +338,14 @@ function cron_package_update_all()
                         $meta['bugs'] = $manifest['bugs'];
                     }
 
+                    if (isset($manifest['changelog'])) {
+                        $meta['changelog'] = $manifest['changelog'];
+                    }
+
+                    if (isset($manifest['license'])) {
+                        $meta['license'] = $manifest['license'];
+                    }
+
                     if (isset($manifest['readme'])) {
                         $meta['readme'] = $manifest['readme'];
                     }
@@ -389,6 +408,33 @@ function cron_package_update_all()
         }
         else
             echo 'No deleted packages<br>';
+    }
+}
+
+/**
+ * Cron to maintain endorsements week count
+ * Called once a day
+ */
+add_action('update_endorsements_trend', 'cron_update_endorsements_trend');
+function cron_update_endorsements_trend(){
+    global $wpdb;
+
+    $countsToRemove = $wpdb->get_results("SELECT COUNT(*) as nb, post_id FROM wp_posts_users_meta WHERE meta_key = 'endorsed' AND updated BETWEEN NOW() - INTERVAL 8 DAY AND NOW() - INTERVAL 7 DAY GROUP BY post_id", ARRAY_A);
+
+    if(!empty($countsToRemove)){
+        foreach($countsToRemove as $post){
+            $wpdb->query("UPDATE wp_postmeta SET meta_value = meta_value - ".$post['nb']." WHERE meta_key = 'endorsements_week' AND post_id = ".$post['post_id']." LIMIT 1");
+            echo 'Updated weekly endorsements for post '.$post['post_id'].': -'.$post['nb']."\n"; 
+        }
+    }
+
+    $countsToRemove = $wpdb->get_results("SELECT COUNT(*) as nb, post_id FROM wp_posts_users_meta WHERE meta_key = 'endorsed' AND updated BETWEEN NOW() - INTERVAL 31 DAY AND NOW() - INTERVAL 30 DAY GROUP BY post_id", ARRAY_A);
+
+    if(!empty($countsToRemove)){
+        foreach($countsToRemove as $post){
+            $wpdb->query("UPDATE wp_postmeta SET meta_value = meta_value - ".$post['nb']." WHERE meta_key = 'endorsements_month' AND post_id = ".$post['post_id']." LIMIT 1");
+            echo 'Updated monthly endorsements for post '.$post['post_id'].': -'.$post['nb']."\n"; 
+        }
     }
 }
 
@@ -462,7 +508,6 @@ class fhub_widget_packages extends WP_Widget
         }
 
         //DO CODE HERE!!
-
         echo $args['after_widget'];
     }
 
@@ -476,12 +521,12 @@ class fhub_widget_packages extends WP_Widget
         }
         // Widget admin form
         ?>
-    <p>
-    <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:');?></label>
-    <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
-    </p>
-    <?php
-}
+        <p>
+        <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:');?></label>
+        <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
+        </p>
+        <?php
+    }
 
     // Updating widget replacing old instances with new
     public function update($new_instance, $old_instance)
@@ -503,18 +548,6 @@ add_action('widgets_init', 'fhub_load_widget');
 /**
  * Hide unwanted admin menu for users
  */
-/*function custom_menu_page_removing() {
-    if(is_admin()){
-        remove_menu_page('vc-welcome');
-        
-        if(!current_user_can('administrator')){
-            remove_menu_page( 'tools.php' );  
-            remove_submenu_page('index.php','relevanssi_admin_search');
-        }
-    }
-}
-add_action( 'admin_init', 'custom_menu_page_removing' );  */
-
 add_filter( 'body_class', function( $classes ){
     foreach( (array) wp_get_current_user()->roles as $role ){
         $classes[] = "user-role-$role";

@@ -3,6 +3,6 @@
         "salesforce/handlebars-php": "^2.3.0",
         "league/oauth2-client": "^2.6",
         "gmostafa/php-graphql-client": "^1.8",
-        "aws/aws-sdk-php": "^3.172"
+        "erusev/parsedown": "^1.7"
     }
 }

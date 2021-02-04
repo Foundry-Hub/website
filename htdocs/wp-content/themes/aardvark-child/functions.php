@@ -58,6 +58,26 @@ function fragment_cache($key, $ttl, $function)
 }
 
 /**
+ * polyfill for php7
+ */
+if(!function_exists("str_starts_with")){
+    function str_starts_with( $haystack, $needle ) {
+        $length = strlen( $needle );
+        return substr( $haystack, 0, $length ) === $needle;
+    }
+}
+
+if(!function_exists("str_ends_with")){
+    function str_ends_with( $haystack, $needle ) {
+        $length = strlen( $needle );
+        if( !$length ) {
+            return true;
+        }
+        return substr( $haystack, -$length ) === $needle;
+    }
+}
+
+/**
  * Display a timediff in english
  * Ex: 3 years ago
  */
@@ -798,3 +818,36 @@ add_filter( 'rank_math/frontend/title', function( $title ) {
     }
     return $title;
 });
+
+/**
+ * Try to generate a RAW link to a .MD file hosted on github or gitlab
+ * https://github.com/user/repo/blob/branch/FILE.md
+ * https://raw.githubusercontent.com/user/repo/branch/FILE.md
+ *
+ * https://gitlab.com/user/repo/-/blob/branch/FILE.md
+ * https://gitlab.com/user/repo/-/raw/branch/FILE.md
+ */
+function get_git_raw_link($url){
+    if(str_ends_with($url,".md")){
+        if(str_starts_with($url, "https://github.com/"))
+            $url = str_replace(["https://github.com/","/blob/"],["https://raw.githubusercontent.com/","/"],$url);
+        elseif(str_starts_with($url, "https://gitlab.com/"))
+            $url = str_replace("/blob/","/raw/",$url);
+    }
+    else
+        $url = false;
+    return $url;
+}
+
+/**
+ * Ajax action: Load markdown file
+ */
+add_action('wp_ajax_load_markdown', 'file_load_markdown');
+function file_load_markdown()
+{
+    $file = file_get_contents($_POST['url']);
+    $Parsedown = new Parsedown();
+    $Parsedown->setSafeMode(true);
+    echo $Parsedown->text($file);
+    wp_die();
+}

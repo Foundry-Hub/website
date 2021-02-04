@@ -519,16 +519,72 @@ class fhub_widget_packages extends WP_Widget
 
     public function widget($args, $instance)
     {
-        $title = apply_filters('widget_title', $instance['title']);
+        //Note: I'm sure there's a better way to do this but I'm tired and it works.
+        if(isset($args['orderby']))
+            $orderby = $args['orderby'];
+        elseif(isset($instance['orderby']))
+            $orderby = $instance['orderby'];
+        else
+            $orderby = 'installs';
 
-        // before and after widget arguments are defined by themes
-        echo $args['before_widget'];
-        if (!empty($title)) {
-            echo $args['before_title'] . $title . $args['after_title'];
+        if(isset($args['maxitem']))
+            $maxitem = $args['maxitem'];
+        elseif(isset($instance['maxitem']))
+            $maxitem = $instance['maxitem'];
+        else
+            $maxitem = 4;
+
+        if(isset($args['direction']))
+            $direction = $args['direction'];
+        elseif(isset($instance['direction']))
+            $direction = $instance['direction'];
+        else
+            $direction = 'horizontal';
+
+        if(isset($args['packagetype']))
+            $packagetype = $args['packagetype'];
+        elseif(isset($instance['packagetype']))
+            $packagetype = $instance['packagetype'];
+        else
+            $packagetype = 'module';
+
+        if(!$query = wp_cache_get("widget_packages_".$orderby.$packagetype.$maxitem)){
+            $args = [
+                'post_type' => 'package',
+                'meta_query' => [
+                    [
+                        'key' => $orderby,
+                        'type' => 'DECIMAL',
+                        'compare' => 'EXISTS'
+                    ],
+                    [
+                        'key' => 'type',
+                        'type' => 'CHAR',
+                        'value' => $packagetype
+                    ]
+                ],
+                'orderby' => [
+                    $orderby => 'DESC'
+                ],
+                'post_status' => ['publish'],
+                'posts_per_page' => $maxitem,
+                'no_found_rows' => true
+            ];
+            
+            $query = new WP_Query($args);
+            wp_cache_set("widget_packages_".$orderby.$packagetype.$maxitem,$query,'',3600);
         }
-
-        //DO CODE HERE!!
-        echo $args['after_widget'];
+        $compiler = getHandleBars();
+        add_filter( 'excerpt_length', function( $length ) { return 30; } );
+   
+        echo '<div class="widget_package widget_package_'.$direction.'">';
+        while($query->have_posts()){
+            $query->the_post();
+            $elements = package_box_generate_data($query->post);
+            echo $compiler->render("package-box", $elements);
+        }
+        echo '</div>';
+        wp_reset_postdata();
     }
 
     // Widget Backend
@@ -539,11 +595,51 @@ class fhub_widget_packages extends WP_Widget
         } else {
             $title = 'New title';
         }
+
+        if (isset($instance['maxitem'])) {
+            $maxitem = $instance['maxitem'];
+        } else {
+            $maxitem = 4;
+        }
+
+        if (isset($instance['direction'])) {
+            $direction = $instance['direction'];
+        } else {
+            $direction = 'vertical';
+        }
+
+        if (isset($instance['orderby'])) {
+            $orderby = $instance['orderby'];
+        } else {
+            $orderby = 'installs';
+        }
+
+        if (isset($instance['packagetype'])) {
+            $packagetype = $instance['packagetype'];
+        } else {
+            $packagetype = 'module';
+        }
         // Widget admin form
         ?>
         <p>
         <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:');?></label>
         <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
+        </p>
+        <p>
+        <label for="<?php echo $this->get_field_id('maxitem'); ?>">Max items</label>
+        <input class="widefat" id="<?php echo $this->get_field_id('maxitem'); ?>" name="<?php echo $this->get_field_name('maxitem'); ?>" type="text" value="<?php echo esc_attr($maxitem); ?>" />
+        </p>
+        <p>
+        <label for="<?php echo $this->get_field_id('direction'); ?>">Direction</label>
+        <input class="widefat" id="<?php echo $this->get_field_id('direction'); ?>" name="<?php echo $this->get_field_name('direction'); ?>" type="text" value="<?php echo esc_attr($direction); ?>" />
+        </p>
+        <p>
+        <label for="<?php echo $this->get_field_id('orderby'); ?>">Order By</label>
+        <input class="widefat" id="<?php echo $this->get_field_id('orderby'); ?>" name="<?php echo $this->get_field_name('orderby'); ?>" type="text" value="<?php echo esc_attr($orderby); ?>" />
+        </p>
+        <p>
+        <label for="<?php echo $this->get_field_id('packagetype'); ?>">Package type</label>
+        <input class="widefat" id="<?php echo $this->get_field_id('packagetype'); ?>" name="<?php echo $this->get_field_name('packagetype'); ?>" type="text" value="<?php echo esc_attr($packagetype); ?>" />
         </p>
         <?php
     }
@@ -551,8 +647,12 @@ class fhub_widget_packages extends WP_Widget
     // Updating widget replacing old instances with new
     public function update($new_instance, $old_instance)
     {
-        $instance = array();
+        $instance = $old_instance;
         $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
+        $instance['maxitem'] = (!empty($new_instance['maxitem'])) ? strip_tags($new_instance['maxitem']) : '';
+        $instance['direction'] = (!empty($new_instance['direction'])) ? strip_tags($new_instance['direction']) : '';
+        $instance['orderby'] = (!empty($new_instance['orderby'])) ? strip_tags($new_instance['orderby']) : '';
+        $instance['packagetype'] = (!empty($new_instance['packagetype'])) ? strip_tags($new_instance['packagetype']) : '';
         return $instance;
     }
 }
@@ -564,6 +664,13 @@ function fhub_load_widget()
 }
 add_action('widgets_init', 'fhub_load_widget');
 
+//Create a shortcode for the widget
+function call_fhub_widget_packages($args = []) {
+    // normalize attribute keys, lowercase
+    $args = array_change_key_case( (array) $args, CASE_LOWER );
+    the_widget('fhub_widget_packages',[],$args);
+}
+add_shortcode('fhub_widget_packages', 'call_fhub_widget_packages');
 
 /**
  * Hide unwanted admin menu for users

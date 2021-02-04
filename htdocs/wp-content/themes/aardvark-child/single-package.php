@@ -92,7 +92,7 @@ if (is_null($post_id)) {
 
     //Get all screenshots
     $allScreenshots = [];
-    if(!empty($meta['media']))
+    if(is_array($meta['media']) && !empty($meta['media']))
         foreach($meta['media'] as $value)
             if($value['type'] == "screenshot"){
 
@@ -105,7 +105,7 @@ if (is_null($post_id)) {
 
     //detect video types and create needed metadata
     $allVideos = [];
-    if(!empty($meta['media']))
+    if(is_array($meta['media']) && !empty($meta['media']))
         foreach($meta['media'] as $value)
             if($value['type'] == "video"){
 
@@ -198,7 +198,7 @@ if (is_null($post_id)) {
     }
 
     //get package title for dependencies
-    if (!empty($meta['dependencies'])) {
+    if (is_array($meta['dependencies']) && !empty($meta['dependencies'])) {
         foreach ($dependencies as $key => $dependency) {
             $title = get_transient("fhub_single_title_" . $dependency['name']);
             if ($title === false) {
@@ -275,6 +275,18 @@ if (is_null($post_id)) {
         "nbRelatedPost" => count($relatedPostElements)
     ];
     $elements["gallery"] = $elements["screenshots"] || $elements["videos"];
+
+    //Readme / Changelog / License attempt to lazyload markdown
+    if(!empty($meta['readme'])){
+        $elements['readme_raw'] = get_git_raw_link($meta['readme']);
+    }
+    if(!empty($meta['changelog'])){
+        $elements['changelog_raw'] = get_git_raw_link($meta['changelog']);
+    }
+    if(!empty($meta['license'])){
+        $elements['license_raw'] = get_git_raw_link($meta['license']);
+    }
+
     $templateName = "single-package";
 
     $jsPackage = [

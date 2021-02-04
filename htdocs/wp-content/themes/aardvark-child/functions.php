@@ -554,7 +554,7 @@ class fhub_widget_packages extends WP_Widget
                 'meta_query' => [
                     [
                         'key' => $orderby,
-                        'type' => 'DECIMAL',
+                        'type' => 'DECIMAL(17,4)',
                         'compare' => 'EXISTS'
                     ],
                     [
@@ -671,6 +671,34 @@ function call_fhub_widget_packages($args = []) {
     the_widget('fhub_widget_packages',[],$args);
 }
 add_shortcode('fhub_widget_packages', 'call_fhub_widget_packages');
+
+//Create a shortcode fhub posts
+function call_fhub_post_grid($args = []) {
+    if(!$query = wp_cache_get("query_posts_home")){
+        $args = [
+            'post_type' => 'post',
+            'category__not_in' => [60],
+            'post_status' => ['publish'],
+            'posts_per_page' => 10,
+            'no_found_rows' => true
+        ];
+        
+        $query = new WP_Query($args);
+        wp_cache_set("query_posts_home",$query,'',3600);
+    }
+    $compiler = getHandleBars();
+    add_filter( 'excerpt_length', function( $length ) { return 160; } );
+
+    echo '<div class="widget_post">';
+    while($query->have_posts()){
+        $query->the_post();
+        $elements = post_box_generate_data($query->post);
+        echo $compiler->render("single-box-home", $elements);
+    }
+    echo '</div>';
+    wp_reset_postdata();
+}
+add_shortcode('fhub_post_grid', 'call_fhub_post_grid');
 
 /**
  * Hide unwanted admin menu for users
@@ -885,8 +913,12 @@ function creator_box_generate_data($post){
 /**
  * Generate News Box
  */
-function post_box_generate_data($post){    
-    $categories = array_column(get_the_category($post->ID), 'name');
+function post_box_generate_data($post){
+    $the_categories = get_the_category($post->ID);
+    $categories = [];
+    foreach($the_categories as $category)
+        $categories[] = ['name'=>$category->name, 'slug'=>$category->slug];
+    
 
     $elements = [
         'ID' => $post->ID,

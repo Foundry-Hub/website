@@ -851,3 +851,20 @@ function file_load_markdown()
     echo $Parsedown->text($file);
     wp_die();
 }
+
+/**
+* Google Analytics tag
+*/
+add_action( 'wp_head', 'add_gtags' );
+function add_gtags(){
+  ?>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-30929783-3"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-30929783-3');
+    </script>
+  <?php
+}

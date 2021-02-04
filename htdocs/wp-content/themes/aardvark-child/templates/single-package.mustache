@@ -190,11 +190,23 @@
         {{#if package.readme}}
         <tr><th>Read-me</th><td><a href="{{package.readme}}" target="_blank"><i class="fas fa-link"></i> Readme URL</a></td></tr>
         {{/if}}
+        {{#if package.changelog}}
+        <tr><th>Changelog</th><td><a href="{{package.changelog}}" target="_blank"><i class="fas fa-link"></i> Changelog URL</a></td></tr>
+        {{/if}}
+        {{#if package.license}}
+        <tr><th>License</th><td><a href="{{package.license}}" target="_blank"><i class="fas fa-link"></i> License URL</a></td></tr>
+        {{/if}}
         </table>
     </div>
     <div class="pkg-right-column">
         <ul id="tabs">
             <li><a href="#tab_description"><i class="fas fa-file-alt"></i> Description</a></li>
+            {{#if readme_raw}}
+            <li><a class="lazyload_markdown" href="#tab_readme"><i class="fab fa-readme"></i> Read Me</a></li>
+            {{/if}}
+            {{#if changelog_raw}}
+            <li><a class="lazyload_markdown" href="#tab_readme"><i class="fas fa-wrench"></i> Changelog</a></li>
+            {{/if}}
             <li><a href="#tab_comments"><i class="fas fa-comment"></i> Comments <span class="tab-count">({{nbComments}})</span></a></li>
             {{#if relatedPost}}
             <li><a href="#tab_related"><i class="far fa-newspaper"></i> Related News <span class="tab-count">({{nbRelatedPost}})</span></a></li>
@@ -202,10 +214,19 @@
             {{#if forum_link}}
             <li><a href="{{forum_link}}" target="_blank"><i class="fas fa-comments"></i> Forum</a></li>
             {{/if}}
+            {{#if license_raw}}
+            <li><a class="lazyload_markdown" href="#tab_license"><i class="fas fa-balance-scale-right"></i> License</a></li>
+            {{/if}}
         </ul>
         <div class="tab_container" id="tab_description">
             {{{package.description_full}}}
         </div>
+        {{#if readme_raw}}
+        <div class="tab_container" id="tab_readme" data-url="{{readme_raw}}"></div>
+        {{/if}}
+        {{#if changelog_raw}}
+        <div class="tab_container" id="tab_changelog" data-url="{{changelog_raw}}"></div>
+        {{/if}}
         <div class="tab_container" id="tab_comments">
             {{{comments}}}
         </div>
@@ -216,6 +237,9 @@
                 {{/each}}
             </div>
         </div>
+        {{#if license_raw}}
+        <div class="tab_container" id="tab_license" data-url="{{license_raw}}"></div>
+        {{/if}}
     </div>
 </div>
 <div style="display:none;">

@@ -983,3 +983,7 @@ span.tab-count {
   display: inline-block;
   margin-top: 116px;
 }
+
+a.gp-profile-button{
+  display:none;
+}

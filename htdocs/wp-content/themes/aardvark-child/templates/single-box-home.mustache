@@ -1,0 +1,25 @@
+<div class="homebox postbox">
+    <div class="homebox-header">
+        <div class="homebox-fade"></div>
+        {{#each categories}}
+            <div class="homebox-category">
+                <a href="/category/{{slug}}">{{name}}</a>
+            </div>
+        {{/each}}
+        <a href="{{url}}" class="homebox-cover" style="background-image:url({{image}});">
+        </a>
+    </div>
+    <div class="homebox-content">
+        <h3><a href="{{url}}">{{title}}</a></h3>
+        <div class="homebox-info">
+            <span class="homebox-date"><i class="fas fa-clock"></i>  <time class="gp-post-meta gp-meta-date" datetime="{{datetime}}">{{datestr}}</time></span>
+            <span class="homebox-author"><i class="fas fa-user"></i>  {{{author}}}</span>
+        </div>
+        <div class="homebox-description">
+            <a href="{{url}}">{{{excerpt}}}</a>
+        </div>
+    </div>
+    <div class="homebox-footer">
+        <span><i class="fas fa-comment-dots"></i>  {{comments}} Comments</span>
+    </div>
+</div>

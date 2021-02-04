@@ -985,5 +985,19 @@ span.tab-count {
 }
 
 a.gp-profile-button{
-  display:none;
+  display:none !important;
+}
+
+.widget_package_horizontal {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  column-gap: 10px;
+  row-gap: 10px;
+}
+
+.widget_package_vertical {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+  row-gap: 10px;
 }

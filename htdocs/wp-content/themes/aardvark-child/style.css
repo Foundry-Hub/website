@@ -1001,3 +1001,122 @@ a.gp-profile-button{
   column-gap: 10px;
   row-gap: 10px;
 }
+
+
+.homebox {
+  height: 365px;
+  position: relative;
+  background: #E1E9F3;
+  display: flex;
+  flex-direction: column;
+}
+
+.homebox-category {
+  position: absolute;
+  top: 0px;
+  left: 15px;
+  z-index: 2;
+}
+
+.homebox-category a{
+  display: inline-block;
+  margin: 0 5px 5px 0;
+  padding: 4px 6px;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.homebox-fade {
+  pointer-events: none;
+  width: 100%;
+  height: 10px;
+  position: absolute;
+  bottom: 0;
+  z-index: 1;
+  background: linear-gradient(to bottom,rgb(56 56 56 / 0%) 0,rgb(225 233 243 / 86%) 60%, rgb(225 233 243) 100%);
+}
+
+.homebox-header {
+  position: relative;
+}
+
+.homebox-cover {
+  height: 144px;
+  position: relative;
+  display: block;
+  background-size: cover;
+  flex: 0 0 144px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #465a74;
+}
+
+.homebox-content h3 {
+  font-size: 18px;
+  margin: 0;
+  line-height: normal;
+  padding: 5px 0px;
+}
+
+.homebox-info p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.homebox-description {
+  line-height: normal;
+}
+
+.homebox-footer {
+  font-size: 13px;
+  color: white;
+  background: #21416C;
+  flex: 0 0 auto;
+}
+
+.homebox-footer span {
+  padding: 5px;
+}
+
+.homebox-content {
+  flex: 1 1 100%;
+  padding: 0px 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+.homebox-content::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1.5em;
+  display: block;
+  background: linear-gradient(0deg, rgba(225, 233, 243, 1) 5%, rgba(225, 233, 243, 0) 100%);
+  content: "";
+}
+
+.homebox-info {
+  font-size: 11px;
+  line-height: 15px;
+}
+
+.homebox-info span {
+  padding: 0px 3px;
+}
+
+.homebox-description a {
+  color: #333333;
+}
+
+.widget_post {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  column-gap: 10px;
+  row-gap: 10px;
+}

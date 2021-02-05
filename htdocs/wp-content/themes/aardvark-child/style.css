@@ -1193,12 +1193,11 @@ a.gp-profile-button{
   #gp-sidebar-right {
       display:block;
   }
-}
-
-#responsive-sidebar-close{
-  display:none !important;
-}
-
-.resp-sidebar-wrapper{
-  padding: 50px 5px 5px 5px;
+  #responsive-sidebar-close{
+    display:none !important;
+  }
+  
+  .resp-sidebar-wrapper{
+    padding: 50px 5px 5px 5px;
+  }
 }

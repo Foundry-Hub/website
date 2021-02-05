@@ -381,6 +381,8 @@ button.forge-oauth span {
     font-size: 6vw;
     top: 15px;
     bottom: unset;
+    background-color: #000000c4;
+    padding: 0px 5px;
   }
   .pkg-download {
     margin-bottom: 5px;
@@ -840,6 +842,41 @@ button.forge-oauth span {
   padding-left: 10px;
 }
 
+@media screen and (max-width: 768px) {
+  .creators-row{
+    height:350px;
+    flex-flow: row wrap;
+  }
+
+  .creators-row-left {
+    flex: 1 1 100%;
+    height: 150px;
+    position: relative;
+  }
+
+  .creators-banner-left {
+    width: 100%;
+  }
+
+  .creators-row-right {
+    flex: 1 1 100%;
+    position: relative;
+    height: 200px;
+  }
+  .single-creator .pkg-main{
+    flex-flow: row wrap;
+  }
+
+  .single-creator .pkg-right-column {
+    flex: 1 1 100%;
+    padding: 15px;
+  }
+
+  .creator-left-column {
+    flex: 1 1 100%;
+  }
+}
+
 .widget a.creators-btn-new {
   border: 1px solid #307C35;
   background-color: #307C35;
@@ -963,6 +1000,12 @@ button.btn_archives {
 span.tab-count {
   font-weight: 400;
   color: #C64343;
+}
+
+@media screen and (max-width: 768px) {
+  .tab-title{
+    display:none;
+  }
 }
 
 .pkgbox-footer a {
@@ -1130,4 +1173,31 @@ a.gp-profile-button{
   font-weight: 900;
   padding-right: 7px;
   font-size: 30px;
+}
+
+@media screen and (max-width: 768px) {
+  .widget_post{
+    grid-template-columns: 1fr;
+  }
+
+  .widget_package_horizontal{
+    grid-template-columns: 1fr;
+  }
+
+  .widget_package_vertical{
+    grid-template-columns: 1fr;
+  }
+}
+
+@media only screen and (max-width: 991px){
+  #gp-sidebar-right {
+      display:block;
+  }
+  #responsive-sidebar-close{
+    display:none !important;
+  }
+  
+  .resp-sidebar-wrapper{
+    padding: 50px 5px 5px 5px;
+  }
 }

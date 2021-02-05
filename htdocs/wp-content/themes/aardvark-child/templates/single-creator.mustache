@@ -1,4 +1,4 @@
-<div class="pkg-banner" style="background-image:linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url({{cover}})">
+<div class="pkg-banner single-creator" style="background-image:linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url({{cover}})">
     <div class="pkg-banner-content">
         <h1 class="pkg-name">{{creator.post_title}}</h1>
         <div class="pkg-banner-left">
@@ -56,10 +56,10 @@
     </div>
     <div class="pkg-right-column">
         <ul id="tabs">
-            <li><a href="#tab_description"><i class="fas fa-file-alt"></i> Description</a></li>
-            <li><a href="#tab_comments"><i class="fas fa-comment"></i> Comments <span class="tab-count">({{creator.comment_count}})</span></a></li>
+            <li><a href="#tab_description"><i class="fas fa-file-alt"></i> <span class="tab-title">Description</span></a></li>
+            <li><a href="#tab_comments"><i class="fas fa-comment"></i> <span class="tab-title">Comments </span><span class="tab-count">({{creator.comment_count}})</span></a></li>
             {{#if relatedPost}}
-            <li><a href="#tab_related"><i class="far fa-newspaper"></i> Related News <span class="tab-count">({{nbRelatedPost}})</span></a></li>
+            <li><a href="#tab_related"><i class="far fa-newspaper"></i> <span class="tab-title">Related News </span><span class="tab-count">({{nbRelatedPost}})</span></a></li>
             {{/if}}
         </ul>
         <div class="tab_container" id="tab_description">

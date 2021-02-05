@@ -200,22 +200,22 @@
     </div>
     <div class="pkg-right-column">
         <ul id="tabs">
-            <li><a href="#tab_description"><i class="fas fa-file-alt"></i> Description</a></li>
+            <li><a href="#tab_description"><i class="fas fa-file-alt"></i> <span class="tab-title">Description</span></a></li>
             {{#if readme_raw}}
-            <li><a class="lazyload_markdown" href="#tab_readme"><i class="fab fa-readme"></i> Read Me</a></li>
+            <li><a class="lazyload_markdown" href="#tab_readme"><i class="fab fa-readme"></i> <span class="tab-title">Read Me</span></a></li>
             {{/if}}
             {{#if changelog_raw}}
-            <li><a class="lazyload_markdown" href="#tab_changelog"><i class="fas fa-wrench"></i> Changelog</a></li>
+            <li><a class="lazyload_markdown" href="#tab_changelog"><i class="fas fa-wrench"></i> <span class="tab-title">Changelog</span></a></li>
             {{/if}}
-            <li><a href="#tab_comments"><i class="fas fa-comment"></i> Comments <span class="tab-count">({{nbComments}})</span></a></li>
+            <li><a href="#tab_comments"><i class="fas fa-comment"></i> <span class="tab-title">Comments </span><span class="tab-count">({{nbComments}})</span></a></li>
             {{#if relatedPost}}
-            <li><a href="#tab_related"><i class="far fa-newspaper"></i> Related News <span class="tab-count">({{nbRelatedPost}})</span></a></li>
+            <li><a href="#tab_related"><i class="far fa-newspaper"></i> <span class="tab-title">Related News </span><span class="tab-count">({{nbRelatedPost}})</span></a></li>
             {{/if}}
             {{#if forum_link}}
-            <li><a href="{{forum_link}}" target="_blank"><i class="fas fa-comments"></i> Forum</a></li>
+            <li><a href="{{forum_link}}" target="_blank"><i class="fas fa-comments"></i> <span class="tab-title">Forum</span></a></li>
             {{/if}}
             {{#if license_raw}}
-            <li><a class="lazyload_markdown" href="#tab_license"><i class="fas fa-balance-scale-right"></i> License</a></li>
+            <li><a class="lazyload_markdown" href="#tab_license"><i class="fas fa-balance-scale-right"></i> <span class="tab-title">License</span></a></li>
             {{/if}}
         </ul>
         <div class="tab_container" id="tab_description">

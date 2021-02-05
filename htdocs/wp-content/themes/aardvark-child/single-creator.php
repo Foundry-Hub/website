@@ -31,6 +31,7 @@ if (have_rows('links')) {
     while (have_rows('links')): the_row();
 		$channel = get_sub_field('channel');
 		$icon = "";
+		$channel_text = $channel;
         switch ($channel) {
 			case "discord":
 				$icon = 'fab fa-discord';
@@ -46,6 +47,7 @@ if (have_rows('links')) {
 				break;
             case "linkedin":
 				$icon = 'fab fa-linkedin';
+				$channel_text = "LinkedIn";
 				break;
             case "patreon":
 				$icon = 'fab fa-patreon';
@@ -61,6 +63,7 @@ if (have_rows('links')) {
 				break;
             case "roll20":
 				$icon = 'fas fa-dice-d20';
+				$channel_text = "Roll20 Marketplace";
 				break;
             case "tumblr":
 				$icon = 'fab fa-tumblr-square';
@@ -74,12 +77,20 @@ if (have_rows('links')) {
             case "youtube":
 				$icon = 'fab fa-youtube-square';
 				break;
-            case "website":
+			case "dtrpg":
+				$icon = 'fas fa-external-link-square-alt';
+				$channel_text = 'DriveThruRPG';
+				break;
+			case "thetokenvault":
+				$icon = 'fas fa-external-link-square-alt';
+				$channel_text = 'The Token Vault';
+				break;
+            default:
 				$icon = 'fas fa-external-link-square-alt';
 				break;
         }
         $links[] = [
-            "channel" => $channel,
+            "channel" => $channel_text,
             "url" => get_sub_field('url'),
             "icon" => $icon,
         ];

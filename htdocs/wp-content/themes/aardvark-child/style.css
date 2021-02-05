@@ -752,6 +752,7 @@ button.forge-oauth span {
 .creators-row-left {
   flex: 1;
   background-size: cover;
+  background-position: center;
 }
 
 .creators-row-right {
@@ -774,6 +775,7 @@ button.forge-oauth span {
   flex-grow: 0;
   height: 20px;
   line-height: 0.7em;
+  margin-top:3px;
 }
 
 .creators-tags a {
@@ -865,6 +867,7 @@ button.btn_archives {
 
 .creatorbox .pkgbox-cover {
   background-size: cover;
+  background-position: center;
   overflow: hidden;
 }
 
@@ -1119,4 +1122,12 @@ a.gp-profile-button{
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   column-gap: 10px;
   row-gap: 10px;
+}
+
+.home_title::before {
+  content: '\f35a';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  padding-right: 7px;
+  font-size: 30px;
 }

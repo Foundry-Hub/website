@@ -25,7 +25,7 @@
   .lg-actions .lg-next, .lg-actions .lg-prev {
     background-color: rgba(0, 0, 0, 0.45);
     border-radius: 2px;
-    color: #999;
+    color: #fff;
     cursor: pointer;
     display: block;
     font-size: 22px;
@@ -42,7 +42,7 @@
     opacity: 0.5;
   }
   .lg-actions .lg-next:hover, .lg-actions .lg-prev:hover {
-    color: #FFF;
+    color: rgb(255, 210, 85);
   }
   .lg-actions .lg-next {
     right: 20px;
@@ -167,7 +167,7 @@
     background-color: rgba(0, 0, 0, 0.45);
   }
   .lg-toolbar .lg-icon {
-    color: #999;
+    color: #fff;
     cursor: pointer;
     float: right;
     font-size: 24px;
@@ -186,7 +186,7 @@
     transition: color 0.2s linear;
   }
   .lg-toolbar .lg-icon:hover {
-    color: #FFF;
+    color: rgb(255, 210, 85);
   }
   .lg-toolbar .lg-close:after {
     content: "\e070";
@@ -218,7 +218,7 @@
   }
   
   #lg-counter {
-    color: #999;
+    color: #fff;
     display: inline-block;
     font-size: 16px;
     padding-left: 20px;
@@ -353,7 +353,7 @@
   .lg-outer .lg-toogle-thumb {
     background-color: #0D0A0A;
     border-radius: 2px 2px 0 0;
-    color: #999;
+    color: #fff;
     cursor: pointer;
     font-size: 24px;
     height: 39px;

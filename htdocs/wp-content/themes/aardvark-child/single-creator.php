@@ -20,11 +20,12 @@ $canEndorse = !(get_current_user_id() !== 0 ? get_post_user_meta(get_the_ID(), g
 
 $images = get_field("showcase");
 $showcase = [];
-foreach ($images as $image) {
-    $showcase[] = [
-        "url" => esc_url($image['url']),
-        "thumbnail" => esc_url($image['sizes']['thumbnail']),
-    ];
+if(!empty($images))
+	foreach ($images as $image) {
+		$showcase[] = [
+			"url" => esc_url($image['url']),
+			"thumbnail" => esc_url($image['sizes']['thumbnail']),
+		];
 }
 $links = [];
 if (have_rows('links')) {

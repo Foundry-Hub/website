@@ -254,6 +254,9 @@
         </div>
         <div class="popup-content-container">
             <div id="content-download-classic" class="popup-content">
+                {{#if patreon_protected}}
+                <p>This module is only available through a Patreon membership. Please check the author information and the description to know more.</p>
+                {{else}}
                 <p>To install this package, open your Foundry Setup screen and navigate to your {{#capitalize package.type}} tab and click the <span class="pkg-highlight">Install {{#capitalize package.type}}</span> button.</p>
                 <p>From there, you can either search for the package unique name: <span class="pkg-highlight">{{package.real_name}}</span> or copy its manifest URL:</p>
                 <p class="flex">
@@ -262,8 +265,12 @@
                 </p>
                 <p>And paste it to the input box at the bottom of your window.</p>
                 <p><img src="https://www.foundryvtt-hub.com/wp-content/themes/aardvark-child/images/install-package.jpg" /></p>
+                {{/if}}
             </div>
             <div id="content-download-forge" class="popup-content">
+                {{#if patreon_protected}}
+                <p><strong>You need to be subscribed to the author Patreon to install this package.</strong></p>
+                {{/if}}
                 <p>You can install this package directly to your <a href="https://forge-vtt.com" target="_blank">Forge</a> account.</p>
                 {{#if hasAccessForge}}
                 <p style="display:none;" id="forge-download-container"><button id="forge-download" class="forge-oauth"><i class="fas fa-cloud-download-alt"></i><span>Install now</span></button></p>

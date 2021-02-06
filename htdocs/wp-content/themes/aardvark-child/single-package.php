@@ -268,6 +268,7 @@ if (is_null($post_id)) {
         "languages" => $languages,
         "hasAccessForge" => !empty($_SESSION['forge_accesstoken']),
         "installs_supported" => !(!empty($meta['premium']) && $meta['premium'] == "protected"),
+        "patreon_protected" => !empty($meta['premium']) && $meta['premium'] == "patreon",
         "filesize" => $filesize,
         "dependencies" => $dependencies,
         "typeIcon" => $typeIcon,

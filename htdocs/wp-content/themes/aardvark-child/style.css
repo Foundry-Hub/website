@@ -730,6 +730,7 @@ button.forge-oauth span {
   text-align: center;
   width: 100%;
   flex: 1;
+  font-size: 16px;
 }
 
 .creator-channel-icon {
@@ -1200,4 +1201,8 @@ a.gp-profile-button{
   .resp-sidebar-wrapper{
     padding: 50px 5px 5px 5px;
   }
+}
+
+.pp-multiple-authors-layout-boxed {
+  margin-top: 60px;
 }

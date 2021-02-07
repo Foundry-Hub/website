@@ -269,7 +269,7 @@ function cron_package_update_all()
         $maxUpdate = $lastUpdate;
         $currentListOfPackage = [];
         foreach ($data['packages'] as $pkg) {
-            $currentListOfPackage[] = strtolower($pkg['name']);
+            $currentListOfPackage[] = sanitize_title($pkg['name']);
             //The bazaar "updated" is more recent than the FHub timestamp. New stuff got added or updated for this package
             if ($pkg['updated'] > $lastUpdate) {
 

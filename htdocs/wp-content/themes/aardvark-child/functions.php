@@ -269,7 +269,7 @@ function cron_package_update_all()
         $maxUpdate = $lastUpdate;
         $currentListOfPackage = [];
         foreach ($data['packages'] as $pkg) {
-            $currentListOfPackage[] = $pkg['name'];
+            $currentListOfPackage[] = strtolower($pkg['name']);
             //The bazaar "updated" is more recent than the FHub timestamp. New stuff got added or updated for this package
             if ($pkg['updated'] > $lastUpdate) {
 
@@ -947,6 +947,7 @@ function admin_bar_control_function() {
     }
 }
 add_action('init', 'admin_bar_control_function', 20);
+remove_action('show_admin_bar', 'wpforo_show_admin_bar');
 
 /**
  * Fix 404 title on Activate page

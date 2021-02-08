@@ -118,9 +118,11 @@ $relatedPostElements = [];
 foreach($relatedPostObject as $related){
 	$relatedPostElements[] = post_box_generate_data($related);
 }
+$content = apply_filters('the_content', $creator['post_content']);
 
 $elements = [
     "creator" => $creator,
+	"content" => $content,
 	"links" => $links,
     "endorsements" => get_field("endorsements"),
     "cover" => wp_get_attachment_url(get_post_thumbnail_id()),

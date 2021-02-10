@@ -297,13 +297,13 @@ if (is_null($post_id)) {
         ]
     ];
 }
-if (empty($_SESSION['forge_accesstoken'])) {
-    $_SESSION['forge_accesstoken'] = "";
+if (empty($_COOKIE['forge_accesstoken'])) {
+    $_COOKIE['forge_accesstoken'] = "";
 }
 
 ?>
 <script type="text/javascript">
-    var forgeToken = "<?php echo $_SESSION['forge_accesstoken']; ?>";
+    var forgeToken = "<?php echo $_COOKIE['forge_accesstoken']; ?>";
     var singlePackage = <?php echo json_encode($jsPackage) ?>;
 </script>
 <?php ghostpool_page_header(get_the_ID(), $header, $header_bg, $header_height);?>

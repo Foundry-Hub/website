@@ -902,7 +902,7 @@ function creator_box_generate_data($post){
         "post_title" => $post->post_title,
         "endorsements" => get_field("endorsements", $post->ID),
         "comment_count" => $post->comment_count,
-        "excerpt" => wp_trim_words(get_the_excerpt($post),50,"[…]"),
+        "excerpt" => wp_trim_words(get_the_excerpt($post),38,"[…]"),
         "creator_tags" => get_the_terms($post->ID, "creator_tags"),
         "cover" => wp_get_attachment_url(get_post_thumbnail_id($post)),
         "url" => get_permalink($post)
@@ -929,7 +929,7 @@ function post_box_generate_data($post){
         'datestr' => get_the_time( get_option( 'date_format' ), $post->ID),
         'comments' => $post->comment_count,
         'author' => ghostpool_author_name($post->ID),
-        'excerpt' => wp_trim_words(get_the_excerpt($post->ID),50,"[…]"),
+        'excerpt' => wp_trim_words(get_the_excerpt($post->ID),38,"[…]"),
         'categories' => $categories
     ];
     return $elements;
@@ -1019,10 +1019,3 @@ function wpb_show_current_user_attachments( $query ) {
     }
     return $query;
 } 
-
-//Excerpt length
-if ( ! function_exists( 'ghostpool_excerpt_length' ) ) {
-	function ghostpool_excerpt_length() {
-		return 180;
-	}
-}

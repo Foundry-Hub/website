@@ -265,7 +265,7 @@ if (is_null($post_id)) {
         "created" => time_elapsed_string($date_created),
         "created_details" => $date_created->format("l jS \of F Y h:i:s A T"),
         "languages" => $languages,
-        "hasAccessForge" => !empty($_SESSION['forge_accesstoken']),
+        "hasAccessForge" => !empty($_COOKIE['forge_accesstoken']),
         "installs_supported" => !(!empty($meta['premium']) && $meta['premium'] == "protected"),
         "patreon_protected" => !empty($meta['premium']) && $meta['premium'] == "patreon",
         "filesize" => $filesize,

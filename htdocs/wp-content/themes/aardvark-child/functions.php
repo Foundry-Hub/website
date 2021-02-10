@@ -575,7 +575,6 @@ class fhub_widget_packages extends WP_Widget
             wp_cache_set("widget_packages_".$orderby.$packagetype.$maxitem,$query,'',3600);
         }
         $compiler = getHandleBars();
-        add_filter( 'excerpt_length', function( $length ) { return 30; } );
    
         echo '<div class="widget_package widget_package_'.$direction.'">';
         while($query->have_posts()){
@@ -970,7 +969,7 @@ add_filter( 'rank_math/frontend/title', function( $title ) {
 function get_git_raw_link($url){
     if(str_ends_with($url,".md")){
         if(str_starts_with($url, "https://github.com/"))
-            $url = str_replace(["https://github.com/","/blob/"],["https://raw.githubusercontent.com/","/"],$url);
+            $url = str_replace(["https://github.com/","/blob/","/tree/"],["https://raw.githubusercontent.com/","/","/"],$url);
         elseif(str_starts_with($url, "https://gitlab.com/"))
             $url = str_replace("/blob/","/raw/",$url);
     }
@@ -1019,3 +1018,10 @@ function wpb_show_current_user_attachments( $query ) {
     }
     return $query;
 } 
+
+//Excerpt length
+if ( ! function_exists( 'ghostpool_excerpt_length' ) ) {
+	function ghostpool_excerpt_length() {
+		return 180;
+	}
+}

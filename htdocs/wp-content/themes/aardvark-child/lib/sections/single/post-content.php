@@ -75,7 +75,6 @@ $image_source = ghostpool_option( 'post_image_source' );
                 <?php //related items
                 $compiler = getHandleBars();
                 $related_items = get_field('related_items');
-                add_filter( 'excerpt_length', function( $length ) { return 30; } );
                 foreach($related_items as $item){
                     if($item->post_type == "package"){
                         $elements = package_box_generate_data($item);

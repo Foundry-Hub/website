@@ -66,8 +66,8 @@ jQuery(document).ready(function () {
     });
 
     jQuery("#forge-oauth-login").click(function () {
-        let url = encodeURIComponent(`https://www.foundryvtt-hub.com/package/jQuery{singlePackage.package.name}/#download-forge`);
-        document.location.href = `https://www.foundryvtt-hub.com/api/forge/oauth_callback.php?hub_redirect=jQuery{url}`;
+        let url = encodeURIComponent(`https://www.foundryvtt-hub.com/package/${singlePackage.package.name}/#download-forge`);
+        document.location.href = `https://www.foundryvtt-hub.com/api/forge/oauth_callback.php?hub_redirect=${url}`;
     });
 
     jQuery("#forge-download").click(function () {

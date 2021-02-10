@@ -113,7 +113,6 @@ $relatedPostObject = get_posts(array(
 	)
 ));
 
-add_filter( 'excerpt_length', function( $length ) { return 30; } );
 $relatedPostElements = [];
 foreach($relatedPostObject as $related){
 	$relatedPostElements[] = post_box_generate_data($related);

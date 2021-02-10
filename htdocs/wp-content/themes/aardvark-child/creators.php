@@ -44,7 +44,7 @@ $query = new WP_Query($args);
 						{
 							$query->the_post();
 							$post = get_post();
-
+							add_filter( 'excerpt_length', function( $length ) { return 160; } );
 							$elements = creator_box_generate_data($post);
 							echo $compiler->render("creator-row", $elements);
 						}

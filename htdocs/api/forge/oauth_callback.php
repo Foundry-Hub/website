@@ -1,5 +1,4 @@
 <?php
-session_start();
 require '../../../vendor/autoload.php';
 require '../../config-hub.php';
 $provider = new \League\OAuth2\Client\Provider\GenericProvider([
@@ -13,7 +12,7 @@ $provider = new \League\OAuth2\Client\Provider\GenericProvider([
     'scopeSeparator' => ' '
 ]);
 if(isset($_GET['hub_redirect'])){
-    $_SESSION['hub_redirect'] = urldecode($_GET['hub_redirect']);
+    setcookie('hub_redirect',urldecode($_GET['hub_redirect']),0,"/","foundryvtt-hub.com",true,true);
 }
 // If we don't have an authorization code then get one
 if (!isset($_GET['code'])) {
@@ -24,17 +23,17 @@ if (!isset($_GET['code'])) {
     $authorizationUrl = $provider->getAuthorizationUrl();
 
     // Get the state generated for you and store it to the session.
-    $_SESSION['forge_oauth2state'] = $provider->getState();
+    setcookie('forge_oauth2state',$provider->getState());
 
     // Redirect the user to the authorization URL.
     header('Location: ' . $authorizationUrl);
     exit;
 
 // Check given state against previously stored one to mitigate CSRF attack
-} elseif (empty($_GET['state']) || (isset($_SESSION['forge_oauth2state']) && $_GET['state'] !== $_SESSION['forge_oauth2state'])) {
+} elseif (empty($_GET['state']) || (isset($_COOKIE['forge_oauth2state']) && $_GET['state'] !== $_COOKIE['forge_oauth2state'])) {
 
-    if (isset($_SESSION['forge_oauth2state'])) {
-        unset($_SESSION['forge_oauth2state']);
+    if (isset($_COOKIE['forge_oauth2state'])) {
+        setcookie('forge_oauth2state',"",time()-3600,0,"/","foundryvtt-hub.com",true,true);
     }
 
     exit('Invalid state');
@@ -49,9 +48,9 @@ if (!isset($_GET['code'])) {
         ]);
 
         //keep it in memcached
-        $_SESSION['forge_accesstoken'] = $accessToken->getToken();
+        setcookie('forge_accesstoken',$accessToken->getToken(),time()-3600,0,"/","foundryvtt-hub.com",true,true);
         
-        header('Location: '.$_SESSION['hub_redirect']);
+        header('Location: '.$_COOKIE['hub_redirect']);
         exit;
     } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
 

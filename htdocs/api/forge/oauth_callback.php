@@ -23,7 +23,7 @@ if (!isset($_GET['code'])) {
     $authorizationUrl = $provider->getAuthorizationUrl();
 
     // Get the state generated for you and store it to the session.
-    setcookie('forge_oauth2state',$provider->getState());
+    setcookie('forge_oauth2state',$provider->getState(),0,"/","foundryvtt-hub.com",true,true);
 
     // Redirect the user to the authorization URL.
     header('Location: ' . $authorizationUrl);
@@ -48,7 +48,7 @@ if (!isset($_GET['code'])) {
         ]);
 
         //keep it in memcached
-        setcookie('forge_accesstoken',$accessToken->getToken(),time()-3600,0,"/","foundryvtt-hub.com",true,true);
+        setcookie('forge_accesstoken',$accessToken->getToken(),0,"/","foundryvtt-hub.com",true,true);
         
         header('Location: '.$_COOKIE['hub_redirect']);
         exit;

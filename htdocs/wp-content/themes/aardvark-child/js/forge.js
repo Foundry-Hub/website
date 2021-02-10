@@ -18,7 +18,7 @@ class Forge {
     }
 
     showForgeMessage(type = "error", message) {
-        $("#forge-message").removeClass().addClass(type).css("display", "block").html(message);
+        jQuery("#forge-message").removeClass().addClass(type).css("display", "block").html(message);
     }
 
     async init() {

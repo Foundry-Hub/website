@@ -8,7 +8,7 @@ $provider = new \League\OAuth2\Client\Provider\GenericProvider([
     'urlAuthorize' => 'https://forge-vtt.com/oauth2/authorize',
     'urlAccessToken' => 'https://forge-vtt.com/oauth2/token',
     'urlResourceOwnerDetails' => 'https://forge-vtt.com/oauth2/resource', //not implemented
-    'scopes' => ['read-profile', 'write-data', 'read-data'],
+    'scopes' => ['read-profile', 'write-data', 'read-data', 'manage-games'],
     'scopeSeparator' => ' '
 ]);
 if(isset($_GET['hub_redirect'])){

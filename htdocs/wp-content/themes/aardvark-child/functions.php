@@ -993,12 +993,12 @@ function file_load_markdown()
 		$base =  explode('/', $_POST['url']);
 		array_pop($base);
 		$base = implode('/', $base);
-		function isRelative($url) {
+		function is_relative($url) {
 			$url = parse_url($url);
 			return !isset($url['scheme']) && !isset($url['host']);
 		}
 		foreach(array_unique($matches[1]) as $url) {
-			if(!isrelative($url)) continue;
+			if(!is_relative($url)) continue;
 			$file = str_replace($url, $base.'/'.$url, $file);
 		}
 	}

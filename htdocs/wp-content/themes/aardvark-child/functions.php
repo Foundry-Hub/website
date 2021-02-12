@@ -986,6 +986,22 @@ add_action('wp_ajax_load_markdown', 'file_load_markdown');
 function file_load_markdown()
 {
     $file = file_get_contents($_POST['url']);
+	$matches = [];
+	preg_match_all('/\] ?\(([^\(\)]+)\)/', $file, $matches);
+	// if there are links
+	if(count($matches) == 2 && count($matches[0]) > 0) {
+		$base =  explode('/', $_POST['url']);
+		array_pop($base);
+		$base = implode('/', $base);
+		function is_relative($url) {
+			$url = parse_url($url);
+			return !isset($url['scheme']) && !isset($url['host']);
+		}
+		foreach(array_unique($matches[1]) as $url) {
+			if(!is_relative($url)) continue;
+			$file = str_replace($url, $base.'/'.$url, $file);
+		}
+	}
     $Parsedown = new Parsedown();
     $Parsedown->setSafeMode(true);
     echo $Parsedown->text($file);

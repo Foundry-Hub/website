@@ -987,7 +987,7 @@ function file_load_markdown()
 {
     $file = file_get_contents($_POST['url']);
 	$matches = [];
-	preg_match_all('/\][ ]*\(([^\(\)]+)\)/', $file, $matches);
+	preg_match_all('/\] ?\(([^\(\)]+)\)/', $file, $matches);
 	// if there are links
 	if(count($matches) == 2 && count($matches[0]) > 0) {
 		$base =  explode('/', $_POST['url']);

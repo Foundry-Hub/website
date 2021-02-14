@@ -302,10 +302,6 @@ if (empty($_COOKIE['forge_accesstoken'])) {
 }
 
 ?>
-<script type="text/javascript">
-    var forgeToken = "<?php echo $_COOKIE['forge_accesstoken']; ?>";
-    var singlePackage = <?php echo json_encode($jsPackage) ?>;
-</script>
 <?php ghostpool_page_header(get_the_ID(), $header, $header_bg, $header_height);?>
 
 <div id="gp-content-wrapper" class="gp-container">
@@ -332,5 +328,10 @@ if (empty($_COOKIE['forge_accesstoken'])) {
 wp_enqueue_script('lightgallery-js', get_stylesheet_directory_uri() . '/js/lightgallery.min.js', array('jquery'), FHUB_RELEASE_TIMESTAMP, true);
 wp_enqueue_script('jquery-modal-js', get_stylesheet_directory_uri() . '/js/jquery-modal.min.js', [], FHUB_RELEASE_TIMESTAMP);
 wp_enqueue_script('package-single-js', get_stylesheet_directory_uri() . '/js/single-package.js', [], FHUB_RELEASE_TIMESTAMP);
+wp_add_inline_script( 'package-single-js', 'const DATA = ' . json_encode( array(
+    'nonce' => wp_create_nonce('package-nonce'),
+    'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+    'singlePackage' => $jsPackage
+)), 'before');
 wp_enqueue_script('forge-js', get_stylesheet_directory_uri() . '/js/forge.js', [], FHUB_RELEASE_TIMESTAMP);
 get_footer();

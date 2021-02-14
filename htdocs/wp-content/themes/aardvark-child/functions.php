@@ -212,6 +212,9 @@ function set_post_user_meta($post_id, $user_id, $key = '', $value = '')
 add_action('wp_ajax_endorse', 'package_endorse');
 function package_endorse()
 {
+    if (!wp_verify_nonce($_POST['nonce'], 'package-nonce') ) {
+        wp_die();
+    }
     $post_id = $_POST['post_id'];
     $user_id = get_current_user_id();
 
@@ -244,7 +247,54 @@ function package_endorse()
             'meta_input'=> $metaValues,
         ));
     }
-    wp_die();
+    die();
+}
+
+/**
+ * Ajax action: Forge API
+ */
+add_action('wp_ajax_forgeAPI', 'forgeAPI');
+add_action('wp_ajax_nopriv_forgeAPI', 'forgeAPI');
+function forgeAPI()
+{
+    if (!wp_verify_nonce($_POST['nonce'], 'package-nonce'))
+        die();
+
+    if(empty($_COOKIE['forge_accesstoken']))
+        die();
+                   
+    if(!preg_match('/^(?>[a-z]{2}\.){0,1}forge-vtt\.com$/',$_POST['domain']))
+        die();
+    
+    if(empty($_POST['method']))
+        $method = $_POST['formData'] ? 'POST' : 'GET';
+    else
+        $method = $_POST['method'];
+
+    $ch = curl_init();
+
+    $headers = array();
+    $headers[] = 'Authorization: Bearer '.$_COOKIE['forge_accesstoken'];
+
+    curl_setopt($ch, CURLOPT_URL, "https://".$_POST['domain']."./".$_POST['endpoint']);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+    if($method=="POST"){
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST['formData']);
+        $headers[] = 'Content-Type: application/json';
+    }
+
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+    $result = curl_exec($ch);
+    if (curl_errno($ch)) {
+        $result = '{ code: '.curl_errno($ch).', error: '.curl_error($ch).' }';
+    }
+ 
+    curl_close($ch);
+    echo $result;
+    die();
 }
 
 /**
@@ -258,6 +308,13 @@ add_action('packages_update_all', 'cron_package_update_all');
 function cron_package_update_all()
 {
     global $wpdb;
+    if(file_exists('/opt/bitnami/apps/wordpress/logs/UPDATE_RUNNING'))
+        return;
+    
+    $file_running = fopen('/opt/bitnami/apps/wordpress/logs/UPDATE_RUNNING','x');
+    fclose($file_running);
+
+    $log = fopen('/opt/bitnami/apps/wordpress/logs/package_update_all.log','a');
     $request = wp_remote_get('https://eu.forge-vtt.com/api/bazaar/?full=1');
     if (!is_wp_error($request)) {
         $body = wp_remote_retrieve_body($request);
@@ -265,10 +322,14 @@ function cron_package_update_all()
 
         //Last update timestamp
         $lastUpdate = (int) get_option("packages_last_update");
-        echo "Last update: $lastUpdate <br>";
+        fwrite($log,date('d.m.Y h:i:s')." | ------------------------------------------------------ \n");
+        fwrite($log,date('d.m.Y h:i:s')." | Last update: $lastUpdate \n");
         $maxUpdate = $lastUpdate;
         $currentListOfPackage = [];
         foreach ($data['packages'] as $pkg) {
+            //Make sure the package is supported on FHub
+            if(!in_array($pkg['type'],['module','system','world']))
+                continue;
             $currentListOfPackage[] = sanitize_title($pkg['name']);
             //The bazaar "updated" is more recent than the FHub timestamp. New stuff got added or updated for this package
             if ($pkg['updated'] > $lastUpdate) {
@@ -276,7 +337,7 @@ function cron_package_update_all()
                 if ($pkg['updated'] > $maxUpdate) {
                     $maxUpdate = $pkg['updated'];
                 }
-                echo "Package needs to be updated: " . $pkg['name'] . " <br>";
+                fwrite($log,date('d.m.Y h:i:s')." | Package needs to be updated: " . $pkg['name'] . " \n");
                 //Check if the post exists in the BDD.
                 $post_id = $wpdb->get_var(
                     $wpdb->prepare("SELECT ID FROM wp_posts WHERE post_type = 'package' AND post_name = %s",
@@ -331,7 +392,7 @@ function cron_package_update_all()
                 //from the "manifest" file
                 $requestManifest = wp_remote_get('https://eu.forge-vtt.com/api/bazaar/manifest/' . $pkg['name'] . '?manifest=1');
                 if (!is_wp_error($request)) {
-                    echo "Retrived manifest for: " . $pkg['name'] . " <br>";
+                    fwrite($log,date('d.m.Y h:i:s')." | Retrived manifest for: " . $pkg['name'] . " \n");
                     $body_manifest = wp_remote_retrieve_body($requestManifest);
                     $manifest = json_decode($body_manifest, true, 512, JSON_INVALID_UTF8_IGNORE);
                     $manifest = $manifest['manifest'];
@@ -378,7 +439,7 @@ function cron_package_update_all()
 
                 //If it doesn't exist, insert a new one
                 if (is_null($post_id)) {
-                    echo "New package, insert: " . $pkg['name'] . " <br>";
+                    fwrite($log,date('d.m.Y h:i:s')." | New package, insert: " . $pkg['name'] . " \n");
                     $meta['endorsements'] = 0;
                     $post_id = wp_insert_post(
                         array(
@@ -395,7 +456,7 @@ function cron_package_update_all()
                         )
                     );
                 } else { //Or update the existing post
-                    echo "Existing package, update: " . $pkg['name'] . " <br>";
+                    fwrite($log,date('d.m.Y h:i:s')." | Existing package, update: " . $pkg['name'] . " \n");
                     $data = array(
                         'ID' => $post_id,
                         'post_title' => $pkg['title'],
@@ -415,20 +476,22 @@ function cron_package_update_all()
         }
         //Once we're done, we save the max update value
         update_option("packages_last_update", $maxUpdate);
-        echo "Updating LastUpdate to: $maxUpdate <br>";
+        fwrite($log,date('d.m.Y h:i:s')." | Updating LastUpdate to: $maxUpdate  \n");
 
         //Now we try to find deleted packages to unpublish them
         $publishedPackages = $wpdb->get_col("SELECT post_name FROM wp_posts WHERE post_type = 'package' AND post_status = 'publish'");
         $deletedPackages = array_diff($publishedPackages, $currentListOfPackage);
-        echo 'Unpublishing deleted packages<br>';
+        fwrite($log,date('d.m.Y h:i:s')." | Unpublishing deleted packages \n");
         $cronquery = 'UPDATE wp_posts SET post_status = "private" WHERE post_type="package" AND post_name IN ("'.implode('","',$deletedPackages).'")';
         if(count($deletedPackages)){
-            echo $cronquery.'<br>';
+            fwrite($log,date('d.m.Y h:i:s')." | $cronquery \n");
             $wpdb->query($cronquery);
         }
         else
-            echo 'No deleted packages<br>';
+            fwrite($log,date('d.m.Y h:i:s')." | No deleted packages \n");
     }
+    fclose($log);
+    unlink('/opt/bitnami/apps/wordpress/logs/UPDATE_RUNNING');
 }
 
 /**
@@ -983,9 +1046,26 @@ function get_git_raw_link($url){
  * Ajax action: Load markdown file
  */
 add_action('wp_ajax_load_markdown', 'file_load_markdown');
+add_action('wp_ajax_nopriv_load_markdown', 'file_load_markdown');
 function file_load_markdown()
 {
     $file = file_get_contents($_POST['url']);
+	$matches = [];
+	preg_match_all('/\] ?\(([^\(\)]+)\)/', $file, $matches);
+	// if there are links
+	if(count($matches) == 2 && count($matches[0]) > 0) {
+		$base =  explode('/', $_POST['url']);
+		array_pop($base);
+		$base = implode('/', $base);
+		function is_relative($url) {
+			$url = parse_url($url);
+			return !isset($url['scheme']) && !isset($url['host']);
+		}
+		foreach(array_unique($matches[1]) as $url) {
+			if(!is_relative($url)) continue;
+			$file = str_replace($url, $base.'/'.$url, $file);
+		}
+	}
     $Parsedown = new Parsedown();
     $Parsedown->setSafeMode(true);
     echo $Parsedown->text($file);
@@ -1019,3 +1099,8 @@ function wpb_show_current_user_attachments( $query ) {
     }
     return $query;
 } 
+
+//Fix embed ratios
+add_action( 'after_setup_theme', function() {
+    add_theme_support( 'responsive-embeds' );
+});

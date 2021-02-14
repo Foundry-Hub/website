@@ -12,11 +12,12 @@ jQuery(document).ready(function () {
             document.location.href = document.location.href + "/#login/";
         } else {
             jQuery.ajax({
-                url: ajaxurl,
+                url: DATA.ajaxUrl,
                 type: "POST",
                 data: {
                     'action': 'endorse',
-                    'post_id': post_id
+                    'post_id': post_id,
+                    'nonce': DATA.nonce
                 }
             }).done(function (response) {
                 let count = jQuery(".pkg-endorse-count");
@@ -27,7 +28,7 @@ jQuery(document).ready(function () {
     });
 
     if (document.location.hash == "#download-forge") {
-        window.forge = new Forge(forgeToken);
+        window.forge = new Forge();
         jQuery(".popup-tab").removeClass("tab-active");
         jQuery("#tab-download-forge").addClass("tab-active");
         jQuery(".popup-content").removeClass("popup-content-active");
@@ -36,7 +37,7 @@ jQuery(document).ready(function () {
     }
 
     jQuery('.pkg-download').click(function () {
-        window.forge = new Forge(forgeToken);
+        window.forge = new Forge();
         jQuery(".popup-tab").removeClass("tab-active");
         jQuery("#tab-download-classic").addClass("tab-active");
         jQuery(".popup-content").removeClass("popup-content-active");
@@ -66,7 +67,7 @@ jQuery(document).ready(function () {
     });
 
     jQuery("#forge-oauth-login").click(function () {
-        let url = encodeURIComponent(`https://www.foundryvtt-hub.com/package/${singlePackage.package.name}/#download-forge`);
+        let url = encodeURIComponent(`https://www.foundryvtt-hub.com/package/${DATA.singlePackage.package.name}/#download-forge`);
         document.location.href = `https://www.foundryvtt-hub.com/api/forge/oauth_callback.php?hub_redirect=${url}`;
     });
 
@@ -107,18 +108,19 @@ jQuery(document).ready(function () {
 
     jQuery('.lazyload_markdown').click(function(){
         let ID = jQuery(this).attr("href");
-        jQuery(ID).html('<p style="text-align:center"><img src="/wp-includes/images/wpspin.gif" /></p>');
-        let url = jQuery(ID).data("url");
-        console.log(url);
-        jQuery.ajax({
-            url: ajaxurl,
-            type: "POST",
-            data: {
-                'action': 'load_markdown',
-                'url': jQuery(ID).data("url")
-            }
-        }).done(function (response) {
-            jQuery(ID).html(response);
-        });
+        if(!jQuery(ID).data("loaded")){
+            jQuery(ID).html('<p style="text-align:center"><img src="/wp-includes/images/wpspin.gif" /></p>');
+            jQuery.ajax({
+                url: DATA.ajaxUrl,
+                type: "POST",
+                data: {
+                    'action': 'load_markdown',
+                    'url': jQuery(ID).data("url")
+                }
+            }).done(function (response) {
+                jQuery(ID).html(response);
+                jQuery(ID).data("loaded",true);
+            });
+        }
     });
 });

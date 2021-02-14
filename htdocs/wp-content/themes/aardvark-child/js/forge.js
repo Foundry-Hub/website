@@ -10,11 +10,9 @@ class Forge {
         "DO-SGP1": { id: "DO-SGP1", name: "Asia & Oceania", domain: "as.forge-vtt.com", available: true }
     }
 
-    constructor(token) {
-        this.token = token;
+    constructor() {
         this.domain = this.regions["DO-NYC3"].domain;
-        if (token != "")
-            this.init();
+        this.init();
     }
 
     showForgeMessage(type = "error", message) {
@@ -49,16 +47,16 @@ class Forge {
         this.entitlements = entitlements;
         this.packages = systems.concat(modules);
 
-        this.pkg = this.packages.find(p => p.name === singlePackage.package.name);
+        this.pkg = this.packages.find(p => p.name === DATA.singlePackage.package.name);
         if (this.pkg) {
-            if (singlePackage.package.latest == this.pkg.installed) { //already installed and uptodate
+            if (DATA.singlePackage.package.latest == this.pkg.installed) { //already installed and uptodate
                 jQuery("#forge-download").attr("disabled", "disabled").find("span").text("Already installed!");
                 this.showForgeMessage("info", `Don't forget to <a href="https://forge-vtt.com/setup" target="_blank">restart</a> your server if you can't see this package.`);
             } else { //installed to a different version than latest, guessing "update"
                 jQuery("#forge-download").find("span").text("Update available");
             }
         } else {
-            this.pkg = singlePackage.package;
+            this.pkg = DATA.singlePackage.package;
         }
         jQuery("#forge-download-container").css("display", "block");
     }
@@ -168,33 +166,21 @@ class Forge {
      *                                        Step 3: Request completed
      */
     async api(endpoint, formData = null, { method, json = true } = {}) {
-        return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.withCredentials = true;
-
-            method = method || (formData ? 'POST' : 'GET');
-            const url = `https://${this.domain}/api/${endpoint}`;
-            xhr.open(method, url);
-            xhr.setRequestHeader("Authorization", "Bearer " + this.token);
-            xhr.responseType = 'text';
-
-            xhr.onreadystatechange = () => {
-                if (xhr.readyState !== 4) return;
-
-                let response = { code: xhr.status, error: xhr.statusText || `Error ${xhr.status}` }
-                try {
-                    response = JSON.parse(xhr.response);
-                } catch (err) { }
-                resolve(response);
-            };
-            xhr.onerror = (err) => {
-                resolve({ code: 500, error: err.message });
-            };
-            if (json) {
-                xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-                formData = JSON.stringify(formData);
+        method = method || (formData ? 'POST' : 'GET');
+        if(json){
+            formData = JSON.stringify(formData);
+        }
+        return jQuery.ajax({
+            url: DATA.ajaxUrl,
+            type: "POST",
+            data: {
+                'action': 'forgeAPI',
+                'nonce': DATA.nonce,
+                'method': method,
+                'formData': formData,
+                'domain': this.domain,
+                'endpoint': endpoint
             }
-            xhr.send(formData);
         });
     }
 }

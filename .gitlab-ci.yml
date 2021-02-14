@@ -6,8 +6,8 @@ deploy_staging:
   tags:
     - deployment
   script:
-    - chmod og= $SSH_PRIVATE_KEY
-    - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $DEPLOY_USER@$STAGING_IP "cd /opt/bitnami/apps/wordpress && git checkout staging && git pull && exit"
+    - chmod og= $SSH_PRIVATE_KEY_STAGING
+    - ssh -i $SSH_PRIVATE_KEY_STAGING -o StrictHostKeyChecking=no $DEPLOY_USER@$STAGING_IP "cd /opt/bitnami/apps/wordpress && git checkout staging && git pull && exit"
   environment:
     name: staging
     url: https://staging.foundryvtt-hub.com

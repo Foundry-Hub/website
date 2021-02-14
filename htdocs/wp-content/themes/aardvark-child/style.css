@@ -647,6 +647,10 @@ button.forge-oauth span {
   content: '\f075' !important;
 }
 
+.gp-theme #buddypress #object-nav #messages-personal-li a::before {
+  content:'\f01c' !important;
+}
+
 .gp-profile-tab::before {
   content: '\f007';
 }

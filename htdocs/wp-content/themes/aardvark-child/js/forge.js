@@ -173,6 +173,7 @@ class Forge {
         return jQuery.ajax({
             url: DATA.ajaxUrl,
             type: "POST",
+            dataType : 'json',
             data: {
                 'action': 'forgeAPI',
                 'nonce': DATA.nonce,

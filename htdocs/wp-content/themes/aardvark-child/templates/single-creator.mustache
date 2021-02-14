@@ -58,6 +58,9 @@
         <ul id="tabs">
             <li><a href="#tab_description"><i class="fas fa-file-alt"></i> <span class="tab-title">Description</span></a></li>
             <li><a href="#tab_comments"><i class="fas fa-comment"></i> <span class="tab-title">Comments </span><span class="tab-count">({{creator.comment_count}})</span></a></li>
+            {{#if relatedPackages}}
+            <li><a href="#tab_relatedPackages"><i class="fas fa-archive"></i> <span class="tab-title">Packages </span><span class="tab-count">({{nbRelatedPackages}})</span></a></li>
+            {{/if}}
             {{#if relatedPost}}
             <li><a href="#tab_related"><i class="far fa-newspaper"></i> <span class="tab-title">Related News </span><span class="tab-count">({{nbRelatedPost}})</span></a></li>
             {{/if}}
@@ -67,6 +70,13 @@
         </div>
         <div class="tab_container" id="tab_comments">
             {{{comments}}}
+        </div>
+        <div class="tab_container" id="tab_relatedPackages">
+            <div class="related-items">
+                {{#each relatedPackages}}
+                    {{> package-box}}
+                {{/each}}
+            </div>
         </div>
         <div class="tab_container" id="tab_related">
             <div class="related-items">

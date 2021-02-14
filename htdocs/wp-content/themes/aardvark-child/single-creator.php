@@ -117,6 +117,13 @@ $relatedPostElements = [];
 foreach($relatedPostObject as $related){
 	$relatedPostElements[] = post_box_generate_data($related);
 }
+
+$creator_packages = get_field('creator_packages');
+$relatedPackagesElements = [];
+foreach($creator_packages as $item){
+	$relatedPackagesElements[] = package_box_generate_data($item);
+}
+
 $content = apply_filters('the_content', $creator['post_content']);
 
 $elements = [
@@ -132,7 +139,9 @@ $elements = [
 	"editURL" => get_edit_post_link(),
 	"comments" => $commentsHTML,
 	"relatedPost" => $relatedPostElements,
-    "nbRelatedPost" => count($relatedPostElements)
+    "nbRelatedPost" => count($relatedPostElements),
+	"relatedPackages" => $relatedPackagesElements,
+	"nbRelatedPackages" => count($relatedPackagesElements)
 ];
 
 ?>

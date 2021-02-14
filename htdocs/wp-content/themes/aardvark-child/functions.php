@@ -276,7 +276,7 @@ function forgeAPI()
     $headers = array();
     $headers[] = 'Authorization: Bearer '.$_COOKIE['forge_accesstoken'];
 
-    curl_setopt($ch, CURLOPT_URL, "https://".$_POST['domain']."./".$_POST['endpoint']);
+    curl_setopt($ch, CURLOPT_URL, "https://".$_POST['domain']."./api/".$_POST['endpoint']);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
     if($method=="POST"){

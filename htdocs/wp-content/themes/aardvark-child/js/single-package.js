@@ -108,18 +108,19 @@ jQuery(document).ready(function () {
 
     jQuery('.lazyload_markdown').click(function(){
         let ID = jQuery(this).attr("href");
-        jQuery(ID).html('<p style="text-align:center"><img src="/wp-includes/images/wpspin.gif" /></p>');
-        let url = jQuery(ID).data("url");
-        console.log(url);
-        jQuery.ajax({
-            url: DATA.ajaxUrl,
-            type: "POST",
-            data: {
-                'action': 'load_markdown',
-                'url': jQuery(ID).data("url")
-            }
-        }).done(function (response) {
-            jQuery(ID).html(response);
-        });
+        if(!jQuery(ID).data("loaded")){
+            jQuery(ID).html('<p style="text-align:center"><img src="/wp-includes/images/wpspin.gif" /></p>');
+            jQuery.ajax({
+                url: DATA.ajaxUrl,
+                type: "POST",
+                data: {
+                    'action': 'load_markdown',
+                    'url': jQuery(ID).data("url")
+                }
+            }).done(function (response) {
+                jQuery(ID).html(response);
+                jQuery(ID).data("loaded",true);
+            });
+        }
     });
 });

@@ -1211,7 +1211,7 @@ a.gp-profile-button{
   margin-top: 60px;
 }
 
-.home-page .wpforo-widget-content .wpforo-widget-wrap .wpforo-widget-content .wpforo-list-item-left img{
+.home-page .wpforo-widget-wrap .wpforo-widget-content .wpforo-list-item-left img{
   width: 32px;
   height: 32px;
 }
@@ -1225,8 +1225,10 @@ a.gp-profile-button{
   width: auto;
 }
 
-.wpforo-widget-wrap .widget li:first-child{
-  border-style: none;
+.home-page .wpforo-widget-wrap li:first-child{
+  border-top: none;
+  border-left: none;
+  border-right: none;
 }
 
 .home-page .wpforo-widget-wrap .widget-title{
@@ -1240,6 +1242,6 @@ a.gp-profile-button{
 }
 
 .home-page .wpforo-widget-wrap .wpforo-widget-content li{
-  padding: 0 0 10px;
+  padding: 0 0 10px !important;
   margin: 0 0 15px;
 }

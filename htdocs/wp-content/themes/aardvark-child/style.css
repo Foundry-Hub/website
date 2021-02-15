@@ -1210,3 +1210,36 @@ a.gp-profile-button{
 .pp-multiple-authors-layout-boxed {
   margin-top: 60px;
 }
+
+.home-page .wpforo-widget-content .wpforo-widget-wrap .wpforo-widget-content .wpforo-list-item-left img{
+  width: 32px;
+  height: 32px;
+}
+
+.home-page .wpforo-widget-wrap .wpforo-widget-content .wpforo-list-item-left{
+  width: 45px;
+}
+
+.home-page .wpforo-widget-wrap .wpforo-widget-content .wpforo-list-item-right{
+  float: left;
+  width: auto;
+}
+
+.wpforo-widget-wrap .widget li:first-child{
+  border-style: none;
+}
+
+.home-page .wpforo-widget-wrap .widget-title{
+  padding:0 0 20px;
+  border-bottom: none;
+  font-size: 19px;
+}
+
+.home-page .gp-recent-comments-widget ul li{
+  padding: 5px 0;
+}
+
+.home-page .wpforo-widget-wrap .wpforo-widget-content li{
+  padding: 0 0 10px;
+  margin: 0 0 15px;
+}

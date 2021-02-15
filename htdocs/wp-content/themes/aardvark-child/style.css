@@ -1245,3 +1245,15 @@ a.gp-profile-button{
   padding: 0 0 10px !important;
   margin: 0 0 15px;
 }
+
+.home-page .wpforo-widget-wrap .wpforo-widget-content{
+  padding: 10px 1px 0px !important;
+}
+
+.home-page .wpforo-widget-wrap .wpforo-widget-content li{
+  border-bottom: 1px solid #E6E6E6;
+}
+
+.home-page .gp-recent-comments-widget li:first-child{
+  border-top-width: 0px;
+}

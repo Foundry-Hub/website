@@ -1280,3 +1280,12 @@ a.gp-profile-button{
 .home-page .gp-recent-comments-widget li:first-child{
   border-top-width: 0px;
 }
+
+.uagb-blockquote {
+  border-top: none;
+  border-bottom: none;
+}
+.uagb-blockquote__author {
+  margin-top: 0;
+  opacity: 1;
+}

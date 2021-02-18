@@ -242,6 +242,15 @@ if (is_null($post_id)) {
         $relatedPostElements[] = post_box_generate_data($related);
     }
 
+    $btnBuyPrice = "";
+    if(!empty($meta['premium']) && $meta['premium'] == "marketplace"){
+        if(!empty($meta['price'])){
+            $btnBuyPrice = "$".$meta['price'];
+        } else {
+            $btnBuyPrice = "Pay what you want";
+        }
+    }
+
     $elements = [
         "postID" => get_the_ID(),
         "loggedOut" => get_current_user_id() === 0,
@@ -268,6 +277,9 @@ if (is_null($post_id)) {
         "hasAccessForge" => !empty($_COOKIE['forge_accesstoken']),
         "installs_supported" => !(!empty($meta['premium']) && $meta['premium'] == "protected"),
         "patreon_protected" => !empty($meta['premium']) && $meta['premium'] == "patreon",
+        "marketplace_protected" => !empty($meta['premium']) && $meta['premium'] == "marketplace",
+        "classicdownload_supported" => empty($meta['premium']),
+        "btnBuyPrice" => $btnBuyPrice,
         "filesize" => $filesize,
         "dependencies" => $dependencies,
         "typeIcon" => $typeIcon,

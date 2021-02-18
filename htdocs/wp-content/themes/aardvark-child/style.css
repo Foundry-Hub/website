@@ -303,6 +303,29 @@ li.pkg-tag {
   color: #050301;
 }
 
+.pkg-banner-right button.pkg-buy {
+  background-image: linear-gradient(to right, #307C52 0%, #1C9524 50%,#307C52 100%);
+  width: auto;
+  padding: 4px 10px 4px 5px;
+}
+.pkg-buy-text {
+  display: inline-block;
+  text-transform: uppercase;
+  font-weight: 400;
+  border: 1px solid #307C35;
+  border-radius: 5px;
+  background-image: linear-gradient(to right, #307C52 0%, #1C9524 50%,#307C52 100%);
+  padding: 5px;
+  box-shadow: 0 0 2px 0px rgb(0 0 0 / 40%);
+}
+.pkg-buy-price {
+  display: inline-block;
+}
+
+span.pkg-buy-text-inner {
+  font-size: 10px;
+}
+
 .popup-content-container {
   margin: 5px 15px 15px 15px;
 }

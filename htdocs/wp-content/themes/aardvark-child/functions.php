@@ -377,6 +377,10 @@ function cron_package_update_all()
                     $meta['premium'] = $pkg['premium'];
                 }
 
+                if (isset($pkg['price'])) {
+                    $meta['price'] = $pkg['price'];
+                }
+
                 if (isset($pkg['library'])) {
                     $meta['library'] = $pkg['library'];
                 }

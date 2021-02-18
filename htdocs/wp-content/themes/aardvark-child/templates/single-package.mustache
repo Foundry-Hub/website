@@ -30,9 +30,17 @@
             </div>
         </div>
         <div class="pkg-banner-right">
+            {{#if marketplace_protected}}
+            <a target="_blank" href="https://forge-vtt.com/bazaar?referral=fhub#package={{package.real_name}}">
+                <button class="pkg-buy">
+                    <span class="pkg-buy-text"><i class="fas fa-shopping-cart"></i><span class="pkg-buy-text-inner">Buy on the Bazaar</span></span>
+                    <span class="pkg-buy-price">{{btnBuyPrice}}</span>
+                </button>
+            </a>
+            {{/if}}
             <button class="pkg-download">
                 <i class="fas fa-download"></i>
-                Download
+                Install
             </button>
             <button {{endorsementDisabled}} data-postid="{{postID}}" class="pkg-endorse {{#if loggedOut}}pkg-login{{/if}}">
                 <i class="fas fa-thumbs-up"></i>
@@ -255,8 +263,12 @@
         <div class="popup-content-container">
             <div id="content-download-classic" class="popup-content">
                 {{#if patreon_protected}}
-                <p>This module is only available through a Patreon membership. Please check the author information and the description to know more.</p>
-                {{else}}
+                <p>This package is only available through a Patreon membership. Please check the author information and the description to know more.</p>
+                {{/if}}
+                {{#if marketplace_protected}}
+                <p>This package is only available through 'The Forge Marketplace'. Please check the download instructions on 'The Forge Marketplace'.</p>
+                {{/if}}
+                {{#if classicdownload_supported}}
                 <p>To install this package, open your Foundry Setup screen and navigate to your {{#capitalize package.type}} tab and click the <span class="pkg-highlight">Install {{#capitalize package.type}}</span> button.</p>
                 <p>From there, you can either search for the package unique name: <span class="pkg-highlight">{{package.real_name}}</span> or copy its manifest URL:</p>
                 <p class="flex">

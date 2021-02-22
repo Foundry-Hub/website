@@ -326,6 +326,11 @@ function cron_package_update_all()
         fwrite($log,date('d.m.Y h:i:s')." | Last update: $lastUpdate \n");
         $maxUpdate = $lastUpdate;
         $currentListOfPackage = [];
+        if(empty($data['packages'])){
+            fwrite($log,date('d.m.Y h:i:s')." | ERROR - Empty package list. Aborting. \n");
+            return;
+        }
+
         foreach ($data['packages'] as $pkg) {
             //Make sure the package is supported on FHub
             if(!in_array($pkg['type'],['module','system','world']))
@@ -755,16 +760,52 @@ function call_fhub_post_grid($args = []) {
     $compiler = getHandleBars();
     add_filter( 'excerpt_length', function( $length ) { return 160; } );
 
-    echo '<div class="widget_post">';
+    $html = '<div class="widget_post">';
     while($query->have_posts()){
         $query->the_post();
         $elements = post_box_generate_data($query->post);
-        echo $compiler->render("single-box-home", $elements);
+        $html .= $compiler->render("single-box-home", $elements);
     }
-    echo '</div>';
+    $html .= '</div>';
     wp_reset_postdata();
+    return $html;
 }
 add_shortcode('fhub_post_grid', 'call_fhub_post_grid');
+
+
+//Create a shortcode for a package
+function call_fhub_package_box($args = []) {
+    // normalize attribute keys, lowercase
+    $args = array_change_key_case( (array) $args, CASE_LOWER );
+    if(empty($args['name']))
+        return;
+    if(!$query = wp_cache_get("query_packagebox_".$args['name'])){
+        $args = [
+            'post_type' => 'package',
+            'name' => $args['name'],
+            'post_status' => ['publish'],
+            'no_found_rows' => true,
+            'posts_per_page' => 1,
+        ];
+        
+        $query = new WP_Query($args);
+        wp_cache_set("query_packagebox_".$args['name'],$query,'',3600);
+    }
+    $compiler = getHandleBars();
+    add_filter( 'excerpt_length', function( $length ) { return 160; } );
+
+    
+    $html = '<div class="packagebox-inline">';
+    while($query->have_posts()){
+        $query->the_post();
+        $elements = package_box_generate_data($query->post);
+        $html .= $compiler->render("package-box", $elements);
+    }
+    $html .= '</div>';
+    wp_reset_postdata();
+    return $html;
+}
+add_shortcode('fhub_package_box', 'call_fhub_package_box');
 
 /**
  * Hide unwanted admin menu for users

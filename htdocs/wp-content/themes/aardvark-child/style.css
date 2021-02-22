@@ -1289,3 +1289,7 @@ a.gp-profile-button{
   margin-top: 0;
   opacity: 1;
 }
+
+.packagebox-inline {
+  width:250px;
+}

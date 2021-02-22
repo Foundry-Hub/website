@@ -172,4 +172,8 @@ $elements = [
 <?php
 wp_enqueue_script('lightgallery-js', get_stylesheet_directory_uri() . '/js/lightgallery.min.js', array('jquery'), FHUB_RELEASE_TIMESTAMP, true);
 wp_enqueue_script('package-single-js', get_stylesheet_directory_uri() . '/js/single-package.js', [], FHUB_RELEASE_TIMESTAMP);
+wp_add_inline_script( 'package-single-js', 'const DATA = ' . json_encode( array(
+    'nonce' => wp_create_nonce('package-nonce'),
+    'ajaxUrl' => admin_url( 'admin-ajax.php' )
+)), 'before');
 get_footer();

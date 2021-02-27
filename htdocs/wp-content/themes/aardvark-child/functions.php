@@ -246,6 +246,9 @@ function package_endorse()
             'ID'        => $post_id,
             'meta_input'=> $metaValues,
         ));
+
+        //Clear profile cache
+        delete_transient("userEndorsements_".$user_id);
     }
     die();
 }
@@ -328,6 +331,8 @@ function cron_package_update_all()
         $currentListOfPackage = [];
         if(empty($data['packages'])){
             fwrite($log,date('d.m.Y h:i:s')." | ERROR - Empty package list. Aborting. \n");
+            fclose($log);
+            unlink('/opt/bitnami/apps/wordpress/logs/UPDATE_RUNNING');
             return;
         }
 
@@ -1094,7 +1099,9 @@ add_action('wp_ajax_load_markdown', 'file_load_markdown');
 add_action('wp_ajax_nopriv_load_markdown', 'file_load_markdown');
 function file_load_markdown()
 {
-    $file = file_get_contents($_POST['url']);
+    $file = @file_get_contents($_POST['url']);
+    if($file === FALSE)
+        return;
 	$matches = [];
 	preg_match_all('/\] ?\(([^\(\)]+)\)/', $file, $matches);
 	// if there are links
@@ -1148,4 +1155,93 @@ function wpb_show_current_user_attachments( $query ) {
 //Fix embed ratios
 add_action( 'after_setup_theme', function() {
     add_theme_support( 'responsive-embeds' );
+});
+
+/**
+ * Custom Endpoints API
+ */
+
+/**
+ * Get package infos
+ */
+function api_get_package_info(WP_REST_Request $request){
+    if(false === ($response = get_transient("api_package_info_".$request['package']))){
+        $package = get_page_by_path($request['package'],OBJECT,'package');
+        if($package){
+            $response = [
+                'endorsements'=> $package->endorsements,
+                'installs'=> $package->installs,
+                'comments'=> $package->comment_count,
+                'url' => 'https://www.foundryvtt-hub.com/package/'.$request['package']
+            ];
+            set_transient("api_package_info_".$request['package'],$response,HOUR_IN_SECONDS);
+        }
+        else
+            return new WP_Error( 'no_package', 'Invalid package', array( 'status' => 404 ));
+    }
+    return $response;
+}
+
+/**
+ * Get package infos
+ */
+function api_get_package_shield(WP_REST_Request $request){
+    $info = api_get_package_info($request);
+    if(is_wp_error($info))
+        return $info;
+
+    $response = [
+        'schemaVersion'=> 1,
+        'logoSvg' => '<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" preserveAspectRatio="xMidYMid meet"><g fill="#2a5080"><path d="M600.3 936.4C469.3 860.1 338.6 782.8 208 705.5 185.2 691.9 195.2 665 193.1 643.7 193.5 541.9 192 440.1 194.2 338.4 211.2 304.4 255.7 294.9 285.3 273.1 347.7 237.2 409.5 200.3 472.3 165.1 453.9 149.6 418.4 143.7 410 122.2 409.4 102.8 405.7 69.1 433.2 95.9 561.4 171.7 690.7 245.5 818.2 322.4c20.3 15.8 9.5 43 12.2 64.8-0.7 99.4 1.7 198.9-1.7 298.2-13.6 34.2-59 40.8-86.3 62.5C677.2 784.7 612.8 822.9 547.3 859.2c19.2 14.2 46.1 22.8 61.8 39.2-2.6 10.9 6.1 45.3-8.8 38zM514.5 832.6c91.9-53.6 185.1-105.3 276.8-159.2 4.4-74.9 1.4-150.3 2.2-225.4 0-31.9 0-63.8 0-95.8C699.5 298.2 606.6 242.3 512.5 188.7 476.2 205.5 442.8 229.1 407.5 248.2 348.5 282.5 289.4 316.6 230.2 350.5c0 107 0 214 0 321 82.8 51.9 168.8 99.1 252.7 149.6 10.2 3.2 20.3 17.6 31.6 11.5z"/><path d="m369.4 663.6c-3.8-10.5-1.5-22.4-1.5-33.5-0.5-5.9 2.7-9.5 8.4-7.9 96.7 0.2 193.5-0.5 290.2 0.6 8.5-0.9 17.9 0 15.7 10.8-0.9 9.8 3.2 24.2-3.6 30.9-53.2 1.7-106.4 0.8-159.6 1.1-47.9-0.2-95.9 0.5-143.8-1-1.9-0.2-4-0.1-5.8-1z"/><path d="m408.3 606.1c9.1-11.1 18.3-22.2 26.1-34.3 10.1-15.1 19.3-30.9 25.1-48.2 2.6-3.1 2.5-10.7 6.6-11.6 41.5 0.2 83 0.4 124.5 0.7 8.8 26.3 21.2 51.6 39 73.1 3.6 6.7 14 11.5 14.1 18.5-10.8 3.3-22.4 1.9-33.6 2.5-67 0-134.1 0.3-201.1-0.5L408.4 606.2Z"/><path d="M393.6 496.4c-0.4-0.9-0.5-31.9-0.4-68.9l0.4-67.2 131.8 0 131.8 0 0 68.5 0 68.5-131.6 0.4c-104.6 0.3-131.7 0-132.1-1.3z"/><path d="m672.6 472.1c-0.7-10.9-0.3-21.9-0.4-32.8 0.1-16.1 0.3-32.1 0.4-48.2 4 0.1 7.8 1.2 11.4 2.8 11.7 5 23.1 11 32.5 19.6 5.9 5.2 11.4 10.8 17.2 16.2-8.7 8.6-17.5 17.1-27.3 24.5-9.2 7-18.8 13.7-29.4 18.5-1.4 0.5-3.6 1.3-4.4-0.6z"/><path d="M365.4 462.5c-28.9-12.9-54.8-38.5-70.4-69.5-2.4-4.9-4.5-10.4-4.5-12.2l0-3.2 43.3 0c32 0 43.6 0.4 44.8 1.5 2.2 2.2 2.2 84.4 0 86.5-1.9 1.9-1.3 2.2-13.2-3.2z"/></g></svg>'
+    ];
+    switch($request['shield']){
+        case "comments":
+            $response['label'] = "Foundry Hub Comments";
+            $response['message'] = $info['comments'];
+            $response['color'] = "#31527D";
+            break;
+        default:
+            $response['label'] = "Foundry Hub Endorsements";
+            $response['message'] = $info['endorsements'];
+            $response['color'] = "#447DC7";
+    }
+    return $response;
+}
+
+add_action( 'rest_api_init', function () {
+    register_rest_route( 'hubapi/v1', '/package/(?P<package>[a-zA-Z0-9-]+)', array(
+        'methods' => 'GET',
+        'callback' => 'api_get_package_info',
+        'permission_callback' => '__return_true',
+        'args' => array(
+            'package' => array(
+                'validate_callback' => function($param, $request, $key){
+                    return sanitize_title($param) == $param;
+                },
+                'required' => true
+            )
+        )
+    ));
+});
+
+add_action( 'rest_api_init', function () {
+    register_rest_route( 'hubapi/v1', '/package/(?P<package>[a-zA-Z0-9-]+)/shield/(?P<shield>[a-zA-Z0-9-]+)', array(
+        'methods' => 'GET',
+        'callback' => 'api_get_package_shield',
+        'permission_callback' => '__return_true',
+        'args' => array(
+            'package' => array(
+                'validate_callback' => function($param, $request, $key){
+                    return sanitize_title($param) == $param;
+                },
+                'required' => true
+            ),
+            'shield' => array(
+                'validate_callback' => function($param, $request, $key){
+                    return in_array($param, ['endorsements','installs','comments']);
+                },
+                'default' => 'endorsements'
+            )
+        )
+    ));
 });

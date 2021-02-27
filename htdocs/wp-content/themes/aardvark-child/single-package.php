@@ -80,6 +80,10 @@ if (is_null($post_id)) {
                 $authors[$key]["discord"] = str_replace("@", "", $author["discord"]);
             }
 
+            if (!empty($author["ko-fi"])) {
+                $authors[$key]["ko-fi"] = str_replace("https://ko-fi.com/", "", $author["ko-fi"]);
+            }
+
         }
     }
     $canEndorse = !(get_current_user_id() !== 0 ? get_post_user_meta(get_the_ID(), get_current_user_id(), "endorsed") : false);

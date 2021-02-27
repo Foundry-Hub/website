@@ -64,3 +64,5 @@ function bp_autologin_on_activation( $user_id, $key, $user ) {
 
 add_action( 'bp_core_activated_user', 'bp_autologin_on_activation', 40, 3 );
 
+define('BP_DEFAULT_COMPONENT', 'profile' );
+

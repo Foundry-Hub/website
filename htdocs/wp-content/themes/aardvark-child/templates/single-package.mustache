@@ -124,7 +124,12 @@
                 {{#each authors}}
                     <li>
                         <a href="/packages/?_sfm_author={{this.name}}">{{this.name}}</a>
-                        <ul>
+                        <ul class="author-fields">
+                        {{#if this.ko-fi}}
+                            <li>
+                                <i class="fas fa-mug-hot ko-fi"></i> <a href="https://ko-fi.com/{{this.ko-fi}}" class="ko-fi-line" target="_blank">Ko-fi (Donate)</a>
+                            </li>
+                        {{/if}}
                         {{#if this.url}}
                             <li>
                                 <i class="fas fa-external-link-square-alt"></i> <a href="{{this.url}}" target="_blank">Author URL</a>

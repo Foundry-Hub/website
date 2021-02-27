@@ -278,6 +278,29 @@ li.pkg-tag {
   font-weight: 500;
 }
 
+.ko-fi::after {
+  content: '\f004';
+  font-weight: 900;
+  font-size: 6px;
+  color: #e6e6e6;
+  position: absolute;
+  margin: 7px 0 0 -12px;
+}
+.ko-fi-line{
+  background: #0079A6;
+  background: -webkit-radial-gradient(circle farthest-corner at center center, #0079A6 0%, #FF5D5F 50%, #0079A6 100%);
+  background: -moz-radial-gradient(circle farthest-corner at center center, #0079A6 0%, #FF5D5F 50%, #0079A6 100%);
+  background: radial-gradient(circle farthest-corner at center center, #0079A6 0%, #FF5D5F 50%, #0079A6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+ul.author-fields li {
+  line-height: 20px;
+}
+
 .popup-tabs {
   display: flex;
   background: #76A0D6;
@@ -1292,4 +1315,12 @@ a.gp-profile-button{
 
 .packagebox-inline {
   width:250px;
+}
+
+.endorsementList h3 {
+  text-align: left;
+}
+.endorsementList li {
+  list-style: none;
+  text-align: left;
 }

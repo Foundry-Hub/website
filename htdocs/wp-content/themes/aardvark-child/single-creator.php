@@ -120,8 +120,10 @@ foreach($relatedPostObject as $related){
 
 $creator_packages = get_field('creator_packages');
 $relatedPackagesElements = [];
-foreach($creator_packages as $item){
-	$relatedPackagesElements[] = package_box_generate_data($item);
+if(is_array($creator_packages) && !empty($creator_packages)){
+	foreach($creator_packages as $item){
+		$relatedPackagesElements[] = package_box_generate_data($item);
+	}
 }
 
 $content = apply_filters('the_content', $creator['post_content']);

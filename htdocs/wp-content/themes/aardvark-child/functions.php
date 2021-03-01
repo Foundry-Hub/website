@@ -455,6 +455,8 @@ function cron_package_update_all()
                 if (is_null($post_id)) {
                     fwrite($log,date('d.m.Y h:i:s')." | New package, insert: " . $pkg['name'] . " \n");
                     $meta['endorsements'] = 0;
+                    $meta['endorsements_month'] = 0;
+                    $meta['endorsements_week'] = 0;
                     $post_id = wp_insert_post(
                         array(
                             'post_author' => 1,

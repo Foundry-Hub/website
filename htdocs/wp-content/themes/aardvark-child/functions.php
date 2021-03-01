@@ -444,8 +444,10 @@ function cron_package_update_all()
                     if (isset($manifest['readme'])) {
                         $meta['readme'] = $manifest['readme'];
                     }
+                    if (isset($manifest['manifest'])) {
+                        $meta['manifest'] = $manifest['manifest'];
+                    }
 
-                    $meta['manifest'] = $manifest['manifest'];
                     if (isset($manifest['media'])) {
                         $meta['media'] = $manifest['media'];
                     }

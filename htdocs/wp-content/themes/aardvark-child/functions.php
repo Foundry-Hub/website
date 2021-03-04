@@ -305,19 +305,23 @@ function forgeAPI()
  * Run every 5 minutes
  * This function store a the latest update date in the database and run it against the Bazaar "updated" property it to know if a package has been updated
  * since the last cron execution
- * TODO: This function is not resilient. Need to add alerts (email should be enough) in case of failure to update, and add a failsafe if the cron takes more than 5 minutes to execute
+ * However, the Bazaar API can sometimes update some fields without changing the "updated" field value. 
+ * To fix this limitation, we're storing a CRC32 of the package json and comparing it against the latest crc32 value from the API each run
+ * TODO: Need to add alerts (email should be enough) in case of failure to update
  */
 add_action('packages_update_all', 'cron_package_update_all');
 function cron_package_update_all()
 {
     global $wpdb;
-    if(file_exists('/opt/bitnami/apps/wordpress/logs/UPDATE_RUNNING'))
+    $logsPath = '/opt/bitnami/apps/wordpress/logs/';
+    //$logsPath = 'C:\Bitnami\wordpress-5.6-0\apps\wordpress\logs\\';
+    if(file_exists($logsPath.'UPDATE_RUNNING'))
         return;
     
-    $file_running = fopen('/opt/bitnami/apps/wordpress/logs/UPDATE_RUNNING','x');
+    $file_running = fopen($logsPath.'UPDATE_RUNNING','x');
     fclose($file_running);
 
-    $log = fopen('/opt/bitnami/apps/wordpress/logs/package_update_all.log','a');
+    $log = fopen($logsPath.'package_update_all.log','a');
     $request = wp_remote_get('https://eu.forge-vtt.com/api/bazaar/?full=1');
     if (!is_wp_error($request)) {
         $body = wp_remote_retrieve_body($request);
@@ -332,26 +336,31 @@ function cron_package_update_all()
         if(empty($data['packages'])){
             fwrite($log,date('d.m.Y h:i:s')." | ERROR - Empty package list. Aborting. \n");
             fclose($log);
-            unlink('/opt/bitnami/apps/wordpress/logs/UPDATE_RUNNING');
+            unlink($logsPath.'UPDATE_RUNNING');
             return;
         }
+
+        $packagesCRC32 = $wpdb->get_results('SELECT package_name, crc32 FROM wp_packages_crc32',OBJECT_K);
 
         foreach ($data['packages'] as $pkg) {
             //Make sure the package is supported on FHub
             if(!in_array($pkg['type'],['module','system','world']))
                 continue;
-            $currentListOfPackage[] = sanitize_title($pkg['name']);
+            $currentListOfPackage[] = $name = sanitize_title($pkg['name']);
+
+            $crc32 = crc32(json_encode($pkg));
             //The bazaar "updated" is more recent than the FHub timestamp. New stuff got added or updated for this package
-            if ($pkg['updated'] > $lastUpdate) {
+            //Or the CRC32 differs and we need to update anyway
+            if ($pkg['updated'] > $lastUpdate || (isset($packagesCRC32[$name]) && $packagesCRC32[$name]->crc32 != $crc32)) {
 
                 if ($pkg['updated'] > $maxUpdate) {
                     $maxUpdate = $pkg['updated'];
                 }
-                fwrite($log,date('d.m.Y h:i:s')." | Package needs to be updated: " . $pkg['name'] . " \n");
+                fwrite($log,date('d.m.Y h:i:s')." | Package needs to be updated: {$pkg['name']} (crc32: $crc32 ) \n");
                 //Check if the post exists in the BDD.
                 $post_id = $wpdb->get_var(
                     $wpdb->prepare("SELECT ID FROM wp_posts WHERE post_type = 'package' AND post_name = %s",
-                        $pkg['name']
+                        $name
                     )
                 );
 
@@ -403,6 +412,10 @@ function cron_package_update_all()
                 foreach($tags as &$tag){
                     $tag = sanitize_title($tag);
                 }
+
+                if (isset($pkg['media'])) {
+                    $meta['media'] = $pkg['media'];
+                }
                 //from the "manifest" file
                 $requestManifest = wp_remote_get('https://eu.forge-vtt.com/api/bazaar/manifest/' . $pkg['name'] . '?manifest=1');
                 if (!is_wp_error($request)) {
@@ -447,10 +460,6 @@ function cron_package_update_all()
                     if (isset($manifest['manifest'])) {
                         $meta['manifest'] = $manifest['manifest'];
                     }
-
-                    if (isset($manifest['media'])) {
-                        $meta['media'] = $manifest['media'];
-                    }
                 }
 
                 //If it doesn't exist, insert a new one
@@ -490,6 +499,8 @@ function cron_package_update_all()
                     wp_update_post($data);
                 }
                 wp_set_object_terms($post_id, $tags, 'package_tags');
+
+                $wpdb->query("INSERT INTO wp_packages_crc32 VALUES ('{$name}', $crc32) ON DUPLICATE KEY UPDATE crc32 = $crc32");
             }
         }
         //Once we're done, we save the max update value
@@ -509,7 +520,7 @@ function cron_package_update_all()
             fwrite($log,date('d.m.Y h:i:s')." | No deleted packages \n");
     }
     fclose($log);
-    unlink('/opt/bitnami/apps/wordpress/logs/UPDATE_RUNNING');
+    unlink($logsPath.'UPDATE_RUNNING');
 }
 
 /**
@@ -1223,14 +1234,14 @@ function api_get_package_shield(WP_REST_Request $request){
 }
 
 add_action( 'rest_api_init', function () {
-    register_rest_route( 'hubapi/v1', '/package/(?P<package>[a-zA-Z0-9-]+)', array(
+    register_rest_route( 'hubapi/v1', '/package/(?P<package>[a-zA-Z0-9-_]+)', array(
         'methods' => 'GET',
         'callback' => 'api_get_package_info',
         'permission_callback' => '__return_true',
         'args' => array(
             'package' => array(
-                'validate_callback' => function($param, $request, $key){
-                    return sanitize_title($param) == $param;
+                'sanitize_callback' => function($param, $request, $key){
+                    return sanitize_title($param);
                 },
                 'required' => true
             )
@@ -1239,14 +1250,14 @@ add_action( 'rest_api_init', function () {
 });
 
 add_action( 'rest_api_init', function () {
-    register_rest_route( 'hubapi/v1', '/package/(?P<package>[a-zA-Z0-9-]+)/shield/(?P<shield>[a-zA-Z0-9-]+)', array(
+    register_rest_route( 'hubapi/v1', '/package/(?P<package>[a-zA-Z0-9-_]+)/shield/(?P<shield>[a-zA-Z0-9-]+)', array(
         'methods' => 'GET',
         'callback' => 'api_get_package_shield',
         'permission_callback' => '__return_true',
         'args' => array(
             'package' => array(
-                'validate_callback' => function($param, $request, $key){
-                    return sanitize_title($param) == $param;
+                'sanitize_callback' => function($param, $request, $key){
+                    return sanitize_title($param);
                 },
                 'required' => true
             ),

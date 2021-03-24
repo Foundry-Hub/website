@@ -1278,3 +1278,44 @@ add_filter('wpforoattach_uploader_class_options', function($options){
 	$options['image_versions']['']['max_height'] = 0;
 	return $options;
 });
+
+/**
+ * Add a webhook for Discord on new published article
+ */
+add_action('publish_post', 'call_discord_webhooks',10,2);
+function call_discord_webhooks($post_id, $post){
+    $data = [];
+    $data['content'] = null;
+    $data['username'] = "Foundry Hub";
+    $data['avatar_url'] = "https://media.foundryvtt-hub.com/wp-content/uploads/2021/02/06221115/fhub_logo4.webp";
+    $embed = [];
+    $embed['title'] = get_the_title();
+    $embed['description'] = get_the_excerpt();
+    $embed['url'] = get_permalink();
+    $embed['color'] = 5814783;
+    $embed['author'] = [
+        "name" => get_the_author_meta('display_name'),
+        "url" => get_the_author_meta('user_url'),
+        "icon_url" => get_avatar_url(get_the_author_meta('ID'))
+    ];
+    $embed['footer'] = [
+        "text" => "New article published"
+    ];
+    $embed['timestamp'] = gmdate('Y-m-d\TH:i:s.000\Z');
+    $embed['image'] = [
+        "url" => get_the_post_thumbnail_url($post_id,'full')
+    ];
+    $data['embeds'] = [$embed];
+    // Encode the data to be sent
+    $json_data = json_encode($data);
+    // Initiate the cURL
+    $url = curl_init(WEBHOOK_FVTT_DISCORD);
+    curl_setopt($url, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($url, CURLOPT_POSTFIELDS, $json_data);
+    curl_setopt($url, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($url, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json',
+        'Content-Length: ' . strlen($json_data))
+    );
+    curl_exec($url);
+}

@@ -76,6 +76,10 @@ if (is_null($post_id)) {
                 $authors[$key]["reddit"] = str_replace("u/", "", $author["reddit"]);
             }
 
+            if (!empty($author["patreon"])) {
+                $authors[$key]["patreon"] = str_replace("https://www.patreon.com/", "", $author["patreon"]);
+            }
+
             if (!empty($author["discord"])) {
                 $authors[$key]["discord"] = str_replace("@", "", $author["discord"]);
             }

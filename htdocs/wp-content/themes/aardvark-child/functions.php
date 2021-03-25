@@ -1293,7 +1293,7 @@ function call_discord_webhooks($post_id, $post){
     $data['avatar_url'] = "https://media.foundryvtt-hub.com/wp-content/uploads/2021/02/06221115/fhub_logo4.webp";
     $embed = [];
     $embed['title'] = html_entity_decode(get_the_title());
-    $embed['description'] = get_the_excerpt();
+    $embed['description'] = html_entity_decode(get_the_excerpt());
     $embed['url'] = get_permalink();
     $embed['color'] = 5814783;
     $embed['author'] = [

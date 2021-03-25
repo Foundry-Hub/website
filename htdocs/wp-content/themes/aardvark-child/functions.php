@@ -1286,6 +1286,7 @@ add_action('publish_post', 'call_discord_webhooks',10,2);
 function call_discord_webhooks($post_id, $post){
     if(empty(WEBHOOK_FVTT_DISCORD))
         return;
+    add_filter( 'excerpt_length', function( $length ) { return 160; } );
     $data = [];
     $data['content'] = null;
     $data['username'] = "Foundry Hub";

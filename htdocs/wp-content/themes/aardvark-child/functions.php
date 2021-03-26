@@ -1286,7 +1286,16 @@ add_action('publish_post', 'call_discord_webhooks',10,2);
 function call_discord_webhooks($post_id, $post){
     if(empty(WEBHOOK_FVTT_DISCORD))
         return;
-    add_filter( 'excerpt_length', function( $length ) { return 160; } );
+
+    //We only send the webhook one time
+    $webhooksent = get_post_meta($post_id, 'webhooksent', true);
+    if(empty($webhooksent)) {
+        update_post_meta($post_id, 'webhooksent', '1');
+    }
+    else
+        return;
+
+    add_filter( 'excerpt_length', function( $length ) { return 130; } );
     $data = [];
     $data['content'] = null;
     $data['username'] = "Foundry Hub";
@@ -1316,14 +1325,16 @@ function call_discord_webhooks($post_id, $post){
     $data['embeds'] = [$embed];
     // Encode the data to be sent
     $json_data = json_encode($data,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
-    // Initiate the cURL
-    $url = curl_init(WEBHOOK_FVTT_DISCORD);
-    curl_setopt($url, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($url, CURLOPT_POSTFIELDS, $json_data);
-    curl_setopt($url, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($url, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-        'Content-Length: ' . strlen($json_data))
-    );
-    curl_exec($url);
+    foreach(WEBHOOK_FVTT_DISCORD as $webhook){
+        // Initiate the cURL
+        $url = curl_init($webhook);
+        curl_setopt($url, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($url, CURLOPT_POSTFIELDS, $json_data);
+        curl_setopt($url, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($url, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($json_data))
+        );
+        curl_exec($url);
+    }
 }

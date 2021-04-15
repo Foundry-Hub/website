@@ -23,6 +23,7 @@ deploy_prod:
     - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $DEPLOY_USER@$PROD1_IP "cd /opt/bitnami/apps/wordpress && git checkout production && git pull && exit"
     - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $DEPLOY_USER@$PROD1_IP "cd /opt/bitnami/apps/wordpress && wp config set FHUB_RELEASE_TIMESTAMP $CI_PIPELINE_ID"
     - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $DEPLOY_USER@$PROD1_IP "cd /opt/bitnami/apps/wordpress && wp w3-total-cache flush all"
+    - curl $OPCACHE_RESET_URL
   environment:
     name: production
     url: https://www.foundryvtt-hub.com

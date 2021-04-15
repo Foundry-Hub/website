@@ -1354,3 +1354,17 @@ function custom_field_weights( $match, $idf, $term) {
 	}
 	return $match;
 }
+
+add_filter( 'relevanssi_results', 'rlv_exact_boost' );
+function rlv_exact_boost( $results ) {
+	$query = strtolower( get_search_query() );
+	foreach ( $results as $post_id => $weight ) {
+		$post = relevanssi_get_post( $post_id );
+
+      	// Boost cases where query is exactly the title
+  		if ( strtolower( $post->post_title ) === $query ) {
+			$results[ $post_id ] = $weight * 100;
+        }
+	}
+	return $results;
+}

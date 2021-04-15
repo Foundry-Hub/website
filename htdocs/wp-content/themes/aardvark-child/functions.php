@@ -1301,9 +1301,9 @@ function call_discord_webhooks($post_id, $post){
     $data['username'] = "Foundry Hub";
     $data['avatar_url'] = "https://media.foundryvtt-hub.com/wp-content/uploads/2021/02/06221115/fhub_logo4.webp";
     $embed = [];
-    $embed['title'] = html_entity_decode(get_the_title());
-    $embed['description'] = html_entity_decode(get_the_excerpt());
-    $embed['url'] = get_permalink();
+    $embed['title'] = html_entity_decode(get_the_title($post_id));
+    $embed['description'] = html_entity_decode(get_the_excerpt($post_id));
+    $embed['url'] = get_permalink($post_id);
     $embed['color'] = 5814783;
     $embed['author'] = [
         "name" => get_the_author_meta('display_name', $post->post_author),
@@ -1325,6 +1325,7 @@ function call_discord_webhooks($post_id, $post){
     $data['embeds'] = [$embed];
     // Encode the data to be sent
     $json_data = json_encode($data,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
+   
     foreach(WEBHOOK_FVTT_DISCORD as $webhook){
         // Initiate the cURL
         $url = curl_init($webhook);
@@ -1337,4 +1338,19 @@ function call_discord_webhooks($post_id, $post){
         );
         curl_exec($url);
     }
+}
+
+add_filter( 'relevanssi_match', 'custom_field_weights',10,3);
+function custom_field_weights( $match, $idf, $term) {
+    
+	$custom_field_detail = json_decode( $match->customfield_detail );
+	if ( null !== $custom_field_detail && isset( $custom_field_detail->real_name ) ) {
+		$match->weight *= 2;
+	}
+
+    $real_name = get_post_meta( $match->doc, 'real_name', true );
+	if ( strcasecmp($term,$real_name)==0) {
+ 		$match->weight *= 100;
+	}
+	return $match;
 }

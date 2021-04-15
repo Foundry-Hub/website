@@ -16,6 +16,8 @@ deploy_staging:
 
 deploy_prod:
   stage: deploy
+  before_script:
+    - apk add --update curl && rm -rf /var/cache/apk/*
   tags:
     - deployment
   script:

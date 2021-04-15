@@ -1350,7 +1350,7 @@ function custom_field_weights( $match, $idf, $term) {
 
     $real_name = get_post_meta( $match->doc, 'real_name', true );
 	if ( strcasecmp($term,$real_name)==0) {
- 		$match->weight *= 100;
+ 		$match->weight *= 200;
 	}
 	return $match;
 }
@@ -1363,7 +1363,7 @@ function rlv_exact_boost( $results ) {
 
       	// Boost cases where query is exactly the title
   		if ( strtolower( $post->post_title ) === $query ) {
-			$results[ $post_id ] = $weight * 100;
+			$results[ $post_id ] = $weight * 200;
         }
 	}
 	return $results;

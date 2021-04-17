@@ -351,7 +351,7 @@ function cron_package_update_all()
             $crc32 = crc32(json_encode($pkg));
             //The bazaar "updated" is more recent than the FHub timestamp. New stuff got added or updated for this package
             //Or the CRC32 differs and we need to update anyway
-            if ($pkg['updated'] > $lastUpdate || (isset($packagesCRC32[$name]) && $packagesCRC32[$name]->crc32 != $crc32)) {
+            if ($pkg['updated'] > $lastUpdate || !isset($packagesCRC32[$name]) || (isset($packagesCRC32[$name]) && $packagesCRC32[$name]->crc32 != $crc32)) {
 
                 if ($pkg['updated'] > $maxUpdate) {
                     $maxUpdate = $pkg['updated'];

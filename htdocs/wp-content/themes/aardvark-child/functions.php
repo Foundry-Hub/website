@@ -770,7 +770,7 @@ function call_fhub_post_grid($args = []) {
             'post_type' => 'post',
             'category__not_in' => [60],
             'post_status' => ['publish'],
-            'posts_per_page' => 10,
+            'posts_per_page' => 8,
             'no_found_rows' => true
         ];
         

@@ -57,7 +57,7 @@
     <div class="pkg-right-column">
         <ul id="tabs">
             <li><a href="#tab_description"><i class="fas fa-file-alt"></i> <span class="tab-title">Description</span></a></li>
-            <li><a href="#tab_comments"><i class="fas fa-comment"></i> <span class="tab-title">Comments </span><span class="tab-count">({{creator.comment_count}})</span></a></li>
+            <li><a id="tab_header_comments" href="#tab_comments"><i class="fas fa-comment"></i> <span class="tab-title">Comments </span><span class="tab-count">({{creator.comment_count}})</span></a></li>
             {{#if relatedPackages}}
             <li><a href="#tab_relatedPackages"><i class="fas fa-archive"></i> <span class="tab-title">Packages </span><span class="tab-count">({{nbRelatedPackages}})</span></a></li>
             {{/if}}

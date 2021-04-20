@@ -1218,13 +1218,35 @@ a.gp-profile-button{
   row-gap: 10px;
 }
 
-.youtube-featured {
-  background: rgb(68,125,199);
-  background: linear-gradient(90deg, rgba(68,125,199,1) 0%, rgba(49,82,125,1) 100%);
-  border-radius: 10px;
-  padding: 20px 0px 0px 0px;
+.vc_row.youtube-featured {
+  background: #447dc7;
+  padding: 20px 0 0;
   margin-bottom: 20px;
-  display:none;
+  display: none;
+  background: linear-gradient(90deg, rgba(59,104,163,1) 0%, rgba(68,125,199,1) 50%, rgba(49,82,125,1) 100%);
+}
+
+.vc_row.youtube-featured .vc_column-inner{
+  padding: 0px;
+}
+
+@media screen and (min-width: 1200px) {
+  .vc_row.youtube-featured {
+    background: #447dc7;
+    width: 100vw;
+    position: relative;
+    margin-left: -50vw;
+    height: 360px;
+    left: 50%;
+    background: linear-gradient(90deg, rgba(59,104,163,1) 0%, rgba(68,125,199,1) 50%, rgba(49,82,125,1) 100%);
+  }
+
+  .vc_row.youtube-featured .vc_column-inner{
+    width: 1200px;
+    margin: 0px auto;
+    position: relative;
+    padding: 0px;
+  }
 }
 
 .home_title::before {

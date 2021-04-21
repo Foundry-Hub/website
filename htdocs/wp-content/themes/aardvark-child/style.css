@@ -669,6 +669,10 @@ button.forge-oauth span {
   content: '\f007' !important;
 }
 
+.gp-theme #buddypress #object-nav #discussions-personal-li a::before{
+  content: '\f4ad' !important;
+}
+
 .gp-theme #buddypress #object-nav #xprofile-personal-li a:before {
   content: '\f007' !important;
 }

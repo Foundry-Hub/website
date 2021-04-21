@@ -97,7 +97,11 @@ jQuery(document).ready(function () {
         jQuery('.tab_container').hide();
         jQuery(t).fadeIn('slow');
         return false;
-    })
+    });
+
+    jQuery("#wpd-bubble-wrapper").click(function(){
+        jQuery("#tab_header_comments").trigger("click");
+    });
 
     if(jQuery(this).hasClass('inactive')){ //this is the start of our condition 
         jQuery('#tabs li a').addClass('inactive');         

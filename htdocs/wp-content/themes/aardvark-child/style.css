@@ -536,6 +536,7 @@ button.forge-oauth span {
 
 .pkgbox-description {
   line-height: normal;
+  word-break: break-word;
 }
 
 .pkgbox-footer {

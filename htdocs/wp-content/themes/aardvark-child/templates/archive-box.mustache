@@ -1,0 +1,19 @@
+<div class="archivebox">
+    <a href="{{link}}" style="background-image:url({{cover_url}});"></a>
+    <div class="archivebox-content">
+        <h3><a href="{{link}}">{{{title}}}</a></h3>
+        <div class="archivebox-info-left">
+            <p><i class="fas fa-user"></i>{{author}}</p>
+            <p><i class="fas fa-calendar-day"></i>{{date}}</p>
+            <p><i class="fas fa-comment"></i>{{nbComments}}</p>
+        </div>
+        <div class="archivebox-info-right">
+            {{#each categories}}
+            <div>
+                <a href="/archives/?_sft_category={{slug}}"><i class="fas fa-tag"></i> {{name}}</a>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    
+</div>

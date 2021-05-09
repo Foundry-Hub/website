@@ -1,0 +1,18 @@
+<div class="videoarchive">
+    <a href="{{link}}" style="background-image:url({{cover_url}});"></a>
+    <div class="videoarchive-content">
+        <h3><a href="{{link}}">{{{title}}}</a></h3>
+        <div class="videoarchive-info-left">
+            <p><i class="fas fa-user"></i>{{author}}</p>
+            <p><i class="fas fa-calendar-day"></i>{{date}}</p>
+        </div>
+        <div class="videoarchive-info-right">
+            {{#each categories}}
+            <div>
+                <a href="/videos/?_sft_video_categories={{slug}}"><i class="fas fa-tag"></i> {{name}}</a>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    
+</div>

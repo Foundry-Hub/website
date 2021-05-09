@@ -793,6 +793,34 @@ function call_fhub_post_grid($args = []) {
 add_shortcode('fhub_post_grid', 'call_fhub_post_grid');
 
 
+//Create a shortcode fhub videos
+function call_fhub_video_grid($args = []) {
+    if(true || !$query = wp_cache_get("query_videos_home")){
+        $args = [
+            'post_type' => 'video',
+            'post_status' => ['publish'],
+            'posts_per_page' => 5,
+            'no_found_rows' => true
+        ];
+        
+        $query = new WP_Query($args);
+        wp_cache_set("query_videos_home",$query,'',3600);
+    }
+    $compiler = getHandleBars();
+
+    $html = '<div class="widget_video">';
+    while($query->have_posts()){
+        $query->the_post();
+        $elements = video_box_generate_data($query->post);
+        $html .= $compiler->render("single-video-home", $elements);
+    }
+    $html .= '</div>';
+    wp_reset_postdata();
+    return $html;
+}
+add_shortcode('fhub_video_grid', 'call_fhub_video_grid');
+
+
 //Create a shortcode for a package
 function call_fhub_package_box($args = []) {
     // normalize attribute keys, lowercase
@@ -1064,6 +1092,23 @@ function post_box_generate_data($post){
 }
 
 /**
+ * Generate Video Box
+ */
+function video_box_generate_data($post){
+    $elements = [
+        'ID' => $post->ID,
+        'title' => $post->post_title,
+        'url' => get_permalink($post->ID),
+        'image' => get_the_post_thumbnail_url($post->ID,"medium"),
+        'datetime' => get_the_date( 'c', $post->ID),
+        'datestr' => get_the_time( get_option( 'date_format' ), $post->ID),
+        'author' => ghostpool_author_name($post->ID)
+    ];
+    return $elements;
+}
+
+
+/**
  * Show admin bar for team members
  */
 function admin_bar_control_function() {
@@ -1283,6 +1328,7 @@ add_filter('wpforoattach_uploader_class_options', function($options){
  * Add a webhook for Discord on new published article
  */
 add_action('publish_post', 'call_discord_webhooks',10,2);
+add_action('publish_video', 'call_discord_webhooks',10,2);
 function call_discord_webhooks($post_id, $post){
     if(empty(WEBHOOK_FVTT_DISCORD))
         return;
@@ -1293,6 +1339,11 @@ function call_discord_webhooks($post_id, $post){
         update_post_meta($post_id, 'webhooksent', '1');
     }
     else
+        return;
+
+    //And only if the ACF is ticked
+    $hook_checkbox = get_field('discord_hook', $post_id);
+    if(!$hook_checkbox || !in_array('discord_enabled',$hook_checkbox))
         return;
 
     add_filter( 'excerpt_length', function( $length ) { return 130; } );
@@ -1315,8 +1366,9 @@ function call_discord_webhooks($post_id, $post){
     ];
     if(str_starts_with($embed['author']['icon_url'],"//"))
         $embed['author']['icon_url'] = "https:".$embed['author']['icon_url'];
+    $typeName = $post->post_type == "video"?"video":"article";
     $embed['footer'] = [
-        "text" => "New article published"
+        "text" => "New $typeName published"
     ];
     $embed['timestamp'] = gmdate('Y-m-d\TH:i:s.000\Z');
     $embed['image'] = [

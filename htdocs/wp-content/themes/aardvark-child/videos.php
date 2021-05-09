@@ -1,5 +1,5 @@
 <?php
-/* Template Name: Archives */
+/* Template Name: Videos */
 get_header();
 
 /**
@@ -13,8 +13,8 @@ if ( $settings &&  is_array( $settings ) ) {
 
 $compiler = getHandleBars();
 
-$args = array('post_type' => 'post');
-$args['search_filter_id'] = 100005962;
+$args = array('post_type' => 'video');
+$args['search_filter_id'] = 100006127;
 $query = new WP_Query($args);
 
 ?>
@@ -35,9 +35,9 @@ $query = new WP_Query($args);
 					{
 						?>
 						<div class="pkgs-results-number">
-							Found <?php echo $query->found_posts; ?> posts
+							Found <?php echo $query->found_posts; ?> videos
 						</div>
-						<div id="archivebox-container">
+						<div id="videoarchive-container">
 						<?php
 						while ($query->have_posts())
 						{
@@ -49,11 +49,10 @@ $query = new WP_Query($args);
 								"cover_url" => get_the_post_thumbnail_url($post,"large"),
 								"author" => get_the_authors(),
 								"date" => get_the_date(),
-								"nbComments" => get_comments_number($post),
-								"categories" => get_the_category(),
+								"categories" => get_the_terms($post,"video_categories"),
 								"title" => get_the_title()
 							];
-							echo $compiler->render("archive-box", $elements);
+							echo $compiler->render("video-box", $elements);
 						}
 						?>
 						</div>

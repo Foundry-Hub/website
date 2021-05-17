@@ -1223,7 +1223,6 @@ a.gp-profile-button {
   background: #447dc7;
   padding: 20px 0 0;
   margin-bottom: 20px;
-  display: none;
   background: linear-gradient(90deg, rgba(59, 104, 163, 1) 0%, rgba(68, 125, 199, 1) 50%, rgba(49, 82, 125, 1) 100%);
   padding-top: 15px;
 }
@@ -1247,6 +1246,9 @@ a.gp-profile-button {
     margin: 0px auto;
     position: relative;
     padding: 0px;
+  }
+  .vc_row.youtube-featured .youtube-featured-title .vc_column-inner{
+    width:auto;
   }
 }
 
@@ -1501,7 +1503,7 @@ div#videoarchive-container {
   display: flex;
   align-items: flex-end;
   flex-flow: row wrap;
-  height: calc(100% - 250px);
+  height: calc(100% - 158px);
   padding: 5px;
 }
 

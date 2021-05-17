@@ -775,7 +775,7 @@ function call_fhub_post_grid($args = []) {
         ];
         
         $query = new WP_Query($args);
-        wp_cache_set("query_posts_home",$query,'',3600);
+        wp_cache_set("query_posts_home",$query,'',300);
     }
     $compiler = getHandleBars();
     add_filter( 'excerpt_length', function( $length ) { return 160; } );
@@ -795,7 +795,7 @@ add_shortcode('fhub_post_grid', 'call_fhub_post_grid');
 
 //Create a shortcode fhub videos
 function call_fhub_video_grid($args = []) {
-    if(true || !$query = wp_cache_get("query_videos_home")){
+    if(!$query = wp_cache_get("query_videos_home")){
         $args = [
             'post_type' => 'video',
             'post_status' => ['publish'],
@@ -804,7 +804,7 @@ function call_fhub_video_grid($args = []) {
         ];
         
         $query = new WP_Query($args);
-        wp_cache_set("query_videos_home",$query,'',3600);
+        wp_cache_set("query_videos_home",$query,'',300);
     }
     $compiler = getHandleBars();
 
@@ -837,7 +837,7 @@ function call_fhub_package_box($args = []) {
         ];
         
         $query = new WP_Query($args);
-        wp_cache_set("query_packagebox_".$args['name'],$query,'',3600);
+        wp_cache_set("query_packagebox_".$args['name'],$query,'',300);
     }
     $compiler = getHandleBars();
     add_filter( 'excerpt_length', function( $length ) { return 160; } );
@@ -1330,6 +1330,16 @@ add_filter('wpforoattach_uploader_class_options', function($options){
 add_action('publish_post', 'call_discord_webhooks',10,2);
 add_action('publish_video', 'call_discord_webhooks',10,2);
 function call_discord_webhooks($post_id, $post){
+
+    $typeName = $post->post_type == "video"?"video":"article";
+
+    //reset cache for homepage
+    if($typeName == "video"){
+        wp_cache_delete("query_videos_home");
+    }else{
+        wp_cache_delete("query_posts_home");
+    }
+
     if(empty(WEBHOOK_FVTT_DISCORD))
         return;
 
@@ -1366,7 +1376,7 @@ function call_discord_webhooks($post_id, $post){
     ];
     if(str_starts_with($embed['author']['icon_url'],"//"))
         $embed['author']['icon_url'] = "https:".$embed['author']['icon_url'];
-    $typeName = $post->post_type == "video"?"video":"article";
+
     $embed['footer'] = [
         "text" => "New $typeName published"
     ];

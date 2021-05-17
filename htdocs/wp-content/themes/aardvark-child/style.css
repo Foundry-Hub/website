@@ -1268,32 +1268,13 @@ a.gp-profile-button {
   font-size: 30px;
 }
 
-@media screen and (max-width: 768px) {
-  .widget_video {
-    grid-template-columns: 1fr;
-  }
-  .widget_post {
-    grid-template-columns: 1fr;
-  }
-  .widget_package_horizontal {
-    grid-template-columns: 1fr;
-  }
-  .widget_package_vertical {
-    grid-template-columns: 1fr;
-  }
+.widget_video {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  column-gap: 10px;
 }
 
-@media only screen and (max-width: 991px) {
-  #gp-sidebar-right {
-    display: block;
-  }
-  #responsive-sidebar-close {
-    display: none !important;
-  }
-  .resp-sidebar-wrapper {
-    padding: 50px 5px 5px 5px;
-  }
-}
+
 
 .pp-multiple-authors-layout-boxed {
   margin-top: 60px;
@@ -1430,12 +1411,6 @@ div#archivebox-container {
   background-position: center;
 }
 
-.widget_video {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  column-gap: 10px;
-}
-
 a.videobox-cover {
   display: block;
   height: 130px;
@@ -1509,8 +1484,9 @@ div#videoarchive-container {
 
 .videoarchive-info-right div {
   display: inline-block;
-  margin: 5px;
+  margin: 1px;
   font-size: 12px;
+  line-height: 12px;
 }
 
 .videoarchive-info-left p {
@@ -1542,4 +1518,43 @@ div#videoarchive-container {
   display: block;
   background-size: cover;
   background-position: center;
+}
+
+@media screen and (max-width: 768px) {
+  .widget_video {
+    grid-template-columns: 1fr;
+    padding: 0px 6vw;
+    row-gap: 20px;
+  }
+  .widget_post {
+    grid-template-columns: 1fr;
+  }
+  .widget_package_horizontal {
+    grid-template-columns: 1fr;
+  }
+  .widget_package_vertical {
+    grid-template-columns: 1fr;
+  }
+  a.videobox-cover{
+    height:54vw;
+  }
+
+  .videobox-content h3{
+    flex: 0 0 100vw;
+  }
+  .youtube-featured-title {
+      padding: 10px 5vw;
+  }
+}
+
+@media only screen and (max-width: 991px) {
+  #gp-sidebar-right {
+    display: block;
+  }
+  #responsive-sidebar-close {
+    display: none !important;
+  }
+  .resp-sidebar-wrapper {
+    padding: 50px 5px 5px 5px;
+  }
 }

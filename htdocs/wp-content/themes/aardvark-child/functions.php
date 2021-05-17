@@ -1352,8 +1352,14 @@ function call_discord_webhooks($post_id, $post){
         return;
 
     //And only if the ACF is ticked
-    $hook_checkbox = get_field('discord_hook', $post_id);
-    if(!$hook_checkbox || !in_array('discord_enabled',$hook_checkbox))
+    $hook = false;
+    foreach($_POST['acf'] as $field){
+        if(is_array($field) && in_array("discord_enabled",$field)){
+            $hook = true;
+            break;
+        }
+    }
+    if(!$hook)
         return;
 
     add_filter( 'excerpt_length', function( $length ) { return 130; } );

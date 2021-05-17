@@ -1542,7 +1542,7 @@ div#videoarchive-container {
   .videobox-content h3{
     flex: 0 0 100vw;
   }
-  .youtube-featured-title {
+  .youtube-featured-title.vc_column_container {
       padding: 10px 5vw;
   }
 }

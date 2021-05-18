@@ -1333,6 +1333,20 @@ function call_discord_webhooks($post_id, $post){
 
     $typeName = $post->post_type == "video"?"video":"article";
 
+    //And only if the ACF is ticked
+    $hook = false;
+    if(!empty($_POST['acf'])){
+        foreach($_POST['acf'] as $field){
+            if(is_array($field) && in_array("discord_enabled",$field)){
+                $hook = true;
+                break;
+            }
+        }
+    }
+    else{
+        return;
+    }
+    
     //reset cache for homepage
     if($typeName == "video"){
         wp_cache_delete("query_videos_home");
@@ -1351,14 +1365,7 @@ function call_discord_webhooks($post_id, $post){
     else
         return;
 
-    //And only if the ACF is ticked
-    $hook = false;
-    foreach($_POST['acf'] as $field){
-        if(is_array($field) && in_array("discord_enabled",$field)){
-            $hook = true;
-            break;
-        }
-    }
+    
     if(!$hook)
         return;
 

@@ -1317,14 +1317,6 @@ add_action( 'rest_api_init', function () {
 });
 
 /**
- * Fix wpForo attachements resize bug
- */
-add_filter('wpforoattach_uploader_class_options', function($options){
-	$options['image_versions']['']['max_height'] = 0;
-	return $options;
-});
-
-/**
  * Add a webhook for Discord on new published article
  */
 add_action('publish_post', 'call_discord_webhooks',10,2);
@@ -1333,6 +1325,20 @@ function call_discord_webhooks($post_id, $post){
 
     $typeName = $post->post_type == "video"?"video":"article";
 
+    //And only if the ACF is ticked
+    $hook = false;
+    if(!empty($_POST['acf'])){
+        foreach($_POST['acf'] as $field){
+            if(is_array($field) && in_array("discord_enabled",$field)){
+                $hook = true;
+                break;
+            }
+        }
+    }
+    else{
+        return;
+    }
+    
     //reset cache for homepage
     if($typeName == "video"){
         wp_cache_delete("query_videos_home");
@@ -1351,14 +1357,7 @@ function call_discord_webhooks($post_id, $post){
     else
         return;
 
-    //And only if the ACF is ticked
-    $hook = false;
-    foreach($_POST['acf'] as $field){
-        if(is_array($field) && in_array("discord_enabled",$field)){
-            $hook = true;
-            break;
-        }
-    }
+    
     if(!$hook)
         return;
 

@@ -1317,14 +1317,6 @@ add_action( 'rest_api_init', function () {
 });
 
 /**
- * Fix wpForo attachements resize bug
- */
-add_filter('wpforoattach_uploader_class_options', function($options){
-	$options['image_versions']['']['max_height'] = 0;
-	return $options;
-});
-
-/**
  * Add a webhook for Discord on new published article
  */
 add_action('publish_post', 'call_discord_webhooks',10,2);

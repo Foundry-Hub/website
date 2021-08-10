@@ -1141,7 +1141,7 @@ add_filter( 'rank_math/frontend/title', function( $title ) {
  * https://gitlab.com/user/repo/-/raw/branch/FILE.md
  */
 function get_git_raw_link($url){
-    if(str_ends_with($url,".md")){
+    if(str_ends_with($url,".md") || str_ends_with($url,"/LICENSE") || str_ends_with($url,"/README") || str_ends_with($url,"/CHANGELOG")){
         if(str_starts_with($url, "https://github.com/"))
             $url = str_replace(["https://github.com/","/blob/","/tree/"],["https://raw.githubusercontent.com/","/","/"],$url);
         elseif(str_starts_with($url, "https://gitlab.com/"))

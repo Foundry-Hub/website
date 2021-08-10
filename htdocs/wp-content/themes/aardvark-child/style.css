@@ -1558,3 +1558,8 @@ div#videoarchive-container {
     padding: 50px 5px 5px 5px;
   }
 }
+
+.gp-theme #buddypress #avatar-crop-pane {
+  border: solid black;
+  border-radius: 100px;
+}

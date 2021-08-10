@@ -11,6 +11,9 @@ jQuery(document).ready(function () {
         if(jQuery(this).hasClass("pkg-login")){
             document.location.href = document.location.href + "/#login/";
         } else {
+            let count = jQuery(".pkg-endorse-count");
+            count.text(parseInt(count.text(), 10) + 1);
+            jQuery('.pkg-endorse').attr("disabled", "disabled").text("Endorsed!");
             jQuery.ajax({
                 url: DATA.ajaxUrl,
                 type: "POST",
@@ -19,10 +22,6 @@ jQuery(document).ready(function () {
                     'post_id': post_id,
                     'nonce': DATA.nonce
                 }
-            }).done(function (response) {
-                let count = jQuery(".pkg-endorse-count");
-                count.text(parseInt(count.text(), 10) + 1);
-                jQuery('.pkg-endorse').attr("disabled", "disabled").text("Endorsed!");
             });
         }
     });

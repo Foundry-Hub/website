@@ -1567,6 +1567,6 @@ div#videoarchive-container {
 div#gp-copyright-text {
   float: none;
 }
-.gp-footer-widget {
+#gp-footer-widgets .gp-footer-widget {
   padding-left: 20px;
 }

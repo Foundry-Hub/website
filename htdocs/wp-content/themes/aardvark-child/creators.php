@@ -49,11 +49,6 @@ $query = new WP_Query($args);
 						}
 						?>
 						</div>
-						<div class="pkgs-page-info">
-							<?php
-								wp_pagenavi( array( 'query' => $query ) );
-							?>
-						</div>
 						<?php
 					}
 					else

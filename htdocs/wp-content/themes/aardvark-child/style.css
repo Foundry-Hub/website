@@ -704,6 +704,19 @@ button.forge-oauth span {
   content: '\f01c' !important;
 }
 
+.gp-theme #buddypress div.activity-meta a.fav::before, .gp-theme #buddypress div.activity-meta a.unfav::before{
+  content:'\f005' !important;
+  font-weight: 400 !important;
+}
+
+.gp-theme #buddypress div.activity-meta a.unfav::before, .gp-theme #buddypress div.activity-meta a.fav:hover::before{
+  font-weight:900 !important;
+}
+
+.gp-theme #buddypress .activity-list li.load-more a::after, .gp-theme #buddypress .activity-list li.load-newest a::after{
+  font-weight: 900 !important;
+}
+
 .gp-profile-tab::before {
   content: '\f007';
 }

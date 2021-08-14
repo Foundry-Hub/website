@@ -1563,3 +1563,10 @@ div#videoarchive-container {
   border: solid black;
   border-radius: 100px;
 }
+
+div#gp-copyright-text {
+  float: none;
+}
+.gp-footer-widget {
+  padding-left: 20px;
+}

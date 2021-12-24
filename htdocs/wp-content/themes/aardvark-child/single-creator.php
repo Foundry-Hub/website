@@ -86,6 +86,14 @@ if (have_rows('links')) {
 				$icon = 'fas fa-external-link-square-alt';
 				$channel_text = 'The Token Vault';
 				break;
+			case "gitlab":
+				$icon = 'fab fa-gitlab';
+				$channel_text = 'Gitlab';
+				break;
+			case "github":
+				$icon = 'fab fa-github-square';
+				$channel_text = 'Github';
+				break;
             default:
 				$icon = 'fas fa-external-link-square-alt';
 				break;

@@ -14,4 +14,4 @@ jobs:
     steps:
       - name: Deploy to EC2
         run: |
-          ssh -i $SSH_PRIVATE_KEY_STAGING -o StrictHostKeyChecking=no $DEPLOY_USER@$STAGING_IP "cd /opt/bitnami/apps/wordpress && git checkout staging && git pull && exit"
+          ssh -i {{ secrets.SSH_PRIVATE_KEY_STAGING }} -o StrictHostKeyChecking=no {{ secrets.DEPLOY_USER }}@{{ secrets.STAGING_IP }} "cd /opt/bitnami/apps/wordpress && git checkout staging && git pull && exit"

@@ -10,9 +10,15 @@ jobs:
     environment: production
 
     steps:
-      - name: Deploy to EC2
-        run: |
-          chmod og= $SSH_PRIVATE_KEY
-          ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $DEPLOY_USER@$PROD1_IP "cd /opt/bitnami/apps/wordpress && git checkout production && git pull && exit"
-          ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $DEPLOY_USER@$PROD1_IP "cd /opt/bitnami/apps/wordpress && wp config set FHUB_RELEASE_TIMESTAMP $GITHUB_RUN_ID"
-          ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $DEPLOY_USER@$PROD1_IP "cd /opt/bitnami/apps/wordpress && wp w3-total-cache flush all"
+      - name: SSH Remote Commands
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.PROD1_IP }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/bitnami/apps/wordpress
+            git checkout production
+            git pull
+            wp config set FHUB_RELEASE_TIMESTAMP $GITHUB_RUN_ID
+            wp w3-total-cache flush all

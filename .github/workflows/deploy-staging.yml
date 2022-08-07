@@ -3,8 +3,6 @@ name: deploy-staging
 on:
   push:
     branches: [ "staging" ]
-    
-  workflow_dispatch:
 
 jobs:
   deploy:
@@ -12,6 +10,14 @@ jobs:
     environment: staging
 
     steps:
-      - name: Deploy to EC2
-        run: |
-          ssh -i {{ secrets.SSH_PRIVATE_KEY_STAGING }} -o StrictHostKeyChecking=no {{ secrets.DEPLOY_USER }}@{{ secrets.STAGING_IP }} "cd /opt/bitnami/apps/wordpress && git checkout staging && git pull && exit"
+      - name: SSH Remote Commands
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.STAGING_IP }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_STAGING }}
+          script: |
+            cd /opt/bitnami/apps/wordpress
+            git checkout staging
+            git pull
+            exit

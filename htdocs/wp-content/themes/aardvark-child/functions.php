@@ -130,6 +130,7 @@ function getHandleBars()
     $handlebars = new Handlebars([
         "loader" => $partialsLoader,
         "partials_loader" => $partialsLoader,
+        "enableDataVariables" => true
     ]);
 
     //handlebars helpers
@@ -1044,6 +1045,68 @@ function package_box_generate_data($post){
         "coverSize"=>$coverSize,
         "premium" => $premium,
         "installs_supported" => !($premium == "protected")
+    ];
+    return $elements;
+}
+
+/**
+ * Generate a Package Row for the Package Jam event
+ */
+function package_jam_row_generate_data($post){
+    $date_updated = new DateTime();
+    $date_updated->setTimestamp($post->updated/1000);
+    $date_created = new DateTime();
+    $date_created->setTimestamp($post->created/1000);
+
+    $cover = "/wp-content/themes/aardvark-child/images/nocover.webp";
+    $coverSize = "cover";
+    if($post->cover){
+        $cover = $post->cover;
+        $coverSize = "cover";
+    } elseif ($post->icon){
+        $cover = $post->icon;
+        $coverSize = "contain";
+    }
+
+    switch ($post->type) {
+        case "world":
+            $typeIcon = "fa-globe";
+            break;
+        case "system":
+            $typeIcon = "fa-dice-d20";
+            break;
+        default:
+            $typeIcon = "fa-puzzle-piece";
+    }
+
+    //We find each category where the package is nominated
+    include_once( $_SERVER['DOCUMENT_ROOT'] . '/JamConfig.php');
+    $categories = [];
+    foreach( PACKAGE_JAM_CATEGORIES_NOMINATIONS as $category => $nominations ){
+        foreach( $nominations as $nomination ){
+            if( $nomination['package'] == $post->postid ){
+                $categories[] = $category;
+            }
+        }
+    }
+
+
+    $elements = [
+        "type" => $post->type,
+        "typeIcon" => $typeIcon,
+        "library" => $post->library,
+        "name" => $post->post_name,
+        "title" => html_entity_decode($post->post_title),
+        "created" => $date_created->format('d M Y'),
+        "updated" => $date_updated->format('d M Y'),
+        "nbAuthors" => count($post->author),
+        "authors" => implode(", ", $post->author),
+        "description" => strip_tags(html_entity_decode($post->post_content)),
+        "endorsements" => $post->endorsements,
+        "nbComments" => $post->comment_count,
+        "url"=>$cover,
+        "coverSize"=>$coverSize,
+        "categories" => $categories
     ];
     return $elements;
 }

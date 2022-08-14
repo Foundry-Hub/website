@@ -1,0 +1,41 @@
+<div id="jam-categories" class="jam-categories">
+    {{#each categories}}
+        <h2 class="jam-category-title" data-category="{{@key}}">{{.}}</h2>
+    {{/each}}
+</div>
+<div id="jam-tabs" class="jam-tabs">
+    {{#each category_list_elements}}
+        <div class="jam-tab" data-category="{{@key}}">
+            {{#each this}}
+                <div class="package-row" data-url="{{url}}">
+                    <div class="package-row-left" style="background-image:linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url({{cover}})">
+                        <h1 class="package-name">{{post_title}}</h1>
+                        <div class="package-banner-left">
+                            <div class="package-banner-endorsement">
+                                <i class="fas fa-thumbs-up"></i>
+                                <div class="package-banner-title">Endorsements</div>
+                                <div class="package-endorse-count">{{endorsements}}</div>
+                            </div>
+                            <div class="package-banner-comments">
+                                <i class="fas fa-comment-dots"></i>
+                                <div class="package-banner-title">Comments</div>
+                                <div>{{comment_count}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="package-row-right">
+                        <div class="package-excerpt">
+                            {{{excerpt}}}
+                        </div>
+                        <div class="package-vote">
+                            {{!-- Display a button with an icon to vote for this package --}}
+                            <button class="package-vote-button" data-url="{{url}}">
+                                <i class="fas fa-thumbs-up"></i>
+                                <span class="package-vote-button-text">Vote for this package</span>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    {{/each}}
+</div>

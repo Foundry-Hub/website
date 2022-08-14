@@ -1240,6 +1240,10 @@ a.gp-profile-button {
   padding-top: 15px;
 }
 
+.vc_row.youtube-featured h4 {
+  color: #fff;
+}
+
 .vc_row.youtube-featured .vc_column-inner {
   padding: 0px;
 }
@@ -1250,7 +1254,7 @@ a.gp-profile-button {
     width: 100vw;
     position: relative;
     margin-left: -50vw;
-    height: 300px;
+    height: 465px;
     left: 50%;
     background: linear-gradient(90deg, rgba(59, 104, 163, 1) 0%, rgba(68, 125, 199, 1) 50%, rgba(49, 82, 125, 1) 100%);
   }

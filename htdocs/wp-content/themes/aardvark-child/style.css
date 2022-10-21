@@ -1240,6 +1240,10 @@ a.gp-profile-button {
   padding-top: 15px;
 }
 
+.vc_row.youtube-featured h4 {
+  color: #fff;
+}
+
 .vc_row.youtube-featured .vc_column-inner {
   padding: 0px;
 }
@@ -1250,7 +1254,7 @@ a.gp-profile-button {
     width: 100vw;
     position: relative;
     margin-left: -50vw;
-    height: 300px;
+    height: 465px;
     left: 50%;
     background: linear-gradient(90deg, rgba(59, 104, 163, 1) 0%, rgba(68, 125, 199, 1) 50%, rgba(49, 82, 125, 1) 100%);
   }
@@ -1586,4 +1590,195 @@ div#gp-copyright-text {
 
 #registerform label{
   display:inline-block;
+}
+
+/* Package Jam */
+.jam-categories {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  margin-bottom: 0px;
+}
+
+.package-row {
+  flex: 1 1 100%;
+  display: flex;
+  height: 200px;
+  position: relative;
+  border-bottom: 1px solid #cccccc;
+  margin-bottom: 15px;
+}
+
+#jam-tabs {
+  display: block;
+  width: 100%;;
+}
+
+.jam-tab {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.package-row-left {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+}
+
+.package-row-right {
+  flex: 2;
+}
+.package-excerpt {
+  margin: 0px 10px;
+}
+
+.package-banner-left {
+  float: left;
+  width: 50%;
+  margin-left: 10px;
+  bottom: 0;
+  position: absolute;
+  color: #fff;
+}
+
+.package-banner-right {
+  float: right;
+  width: 50%;
+  text-align: right;
+  bottom: 0px;
+  position: absolute;
+  right: 10px;
+}
+
+.package-banner-left div {
+  display: inline-block;
+  height: 36px;
+  width: 150px;
+  line-height: normal;
+}
+
+.package-banner-left div div {
+  margin-left: 40px;
+}
+
+.package-banner-left div.package-banner-title {
+  font-size: 11px;
+  height: 15px;
+}
+
+.package-banner-left i {
+  font-size: 25px;
+  position: absolute;
+  padding: 5px;
+}
+
+.package-name {
+  color: white;
+  position: absolute;
+  bottom: 28px;
+  font-size: 30px;
+  padding-left: 10px;
+}
+
+@media screen and (max-width: 768px) {
+  .package-row {
+    height: 350px;
+    flex-flow: row wrap;
+  }
+  .package-row-left {
+    flex: 1 1 100%;
+    height: 150px;
+    position: relative;
+  }
+  .package-banner-left {
+    width: 100%;
+  }
+  .package-row-right {
+    flex: 1 1 100%;
+    position: relative;
+    height: 200px;
+  }
+}
+
+h2.jam-category-title {
+    flex: 1;
+    font-size: 18px;
+    text-align: center;
+    padding: 5px;
+    color: #21416C;
+    margin: 0px 5px;
+    cursor: pointer;
+}
+
+h2.jam-category-title.active {
+    color: white;
+    background-color: #447DC7;
+    border-radius: 5px;
+}
+
+
+#jam-list .package-banner-left {
+    width: 33%;
+    display: flex;
+}
+
+#jam-list .package-banner-left div {
+    flex: 1;
+    margin-bottom: 7px;
+}
+
+.jam-can-vote {
+  background-image: url(images/voteplus.webp);
+  width: 16px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: relative;
+  top: 3px;
+  height: 16px;
+}
+
+.jam-category-info {
+    background-color: aliceblue;
+    margin: 20px;
+    padding: 20px;
+    text-align: center;
+    width: -webkit-fill-available;
+}
+
+p.jam-category-description {
+    font-weight: 500;
+}
+
+h2.jam-category-title.jam-category-active {
+    background: linear-gradient(to right, #447dc7 0%, #76a0d6 50%,#447dc7 100%);
+    border-radius: 5px;
+    color: white;
+}
+
+h2.jam-category-title:hover {
+    background: linear-gradient(to right, #447dc7 0%, #76a0d6 50%,#447dc7 100%);
+    color: white;
+    border-radius: 5px;
+}
+
+#jam-list .package-endorse-count {position: relative;top: -10px;}
+
+@media screen and (max-width: 768px) {
+  h2.jam-category-title{
+    font-size: 18px;
+    line-height: 16px;
+    height: 42px;
+  }
+}
+
+button.package-vote-button {
+    position: relative;
+    right: 20px;
+}
+
+button.package-vote-button[disabled] {
+    background: darkgrey;
+    cursor: default;
 }

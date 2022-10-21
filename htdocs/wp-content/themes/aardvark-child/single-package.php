@@ -206,7 +206,7 @@ if (is_null($post_id)) {
     }
 
     //get package title for dependencies
-    if (is_array($meta['dependencies']) && !empty($meta['dependencies'])) {
+    if (isset($meta['dependencies']) && is_array($meta['dependencies']) && !empty($meta['dependencies'])) {
         $dependencies = $meta['dependencies'];
         foreach ($dependencies as $key => $dependency) {
             $title = get_transient("fhub_single_title_" . $dependency['name']);

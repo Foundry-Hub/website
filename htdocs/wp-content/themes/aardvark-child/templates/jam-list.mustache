@@ -1,0 +1,63 @@
+<div id="jam-categories" class="jam-categories">
+    {{#each category_list_elements}}
+        <h2 class="jam-category-title {{this.is_active}}" data-category="{{this.category}}">{{this.category_name}}</h2>
+    {{/each}}
+</div>
+<div id="jam-tabs" class="jam-tabs">
+    {{#each category_list_elements}}
+        <div class="jam-tab" data-category="{{@key}}" style="display:{{this.css_display}}">
+            <div class="jam-category-info">
+                <p class="jam-category-description">Category description: {{this.category_description}}</p>
+                {{#if is_logged_in}}
+                    <p class="jam-category-votes-left">You have <span class="jam-category-votes-left-count">{{this.votes_left}}</span> votes left in this category.</p>
+                {{else}}
+                    <p class="jam-category-votes-left">You must be logged in to vote.</p>
+                {{/if}}
+            </div>
+            {{#each this.package-rows}}
+                <div class="package-row">
+                    <div class="package-row-left" data-name="{{this.name}}" style="background-image:linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url({{this.cover}})">
+                        <h1 class="package-name">{{this.title}}</h1>
+                        <div class="package-banner-left">
+                            <div class="package-banner-endorsement">
+                                <i class="fas fa-thumbs-up"></i>
+                                <div class="package-banner-title">Endorsements</div>
+                                <div class="package-endorse-count">{{this.endorsements}}</div>
+                            </div>
+                            <div class="package-banner-comments">
+                                <i class="fas fa-comment-dots"></i>
+                                <div class="package-banner-title">Comments</div>
+                                <div class="package-endorse-count">{{this.nbComments}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="package-row-right">
+                        <div class="package-excerpt">
+                            {{{this.description}}}
+                        </div>
+                        <div class="jam-package-footer">
+                            <div class="jam-package-footer-author">
+                                <i class="fas fa-user"></i>
+                                <span class="jam-package-footer-author-name">{{this.authors}}</span>
+                            </div>
+                            <div class="package-vote">
+                                {{!-- Display a +1 button with an icon to vote for this package if the user did not already vote for it --}}
+                                {{#if this.user_voted}}
+                                    <button class="package-vote-button" data-name="{{this.name}}" disabled>
+                                        <i class="fas fa-check"></i>
+                                        <span class="package-vote-button-text">Vote submitted</span>
+                                    </button>
+                                {{else}}
+                                    <button class="package-vote-button" data-name="{{this.name}}" {{this.votes_open}}>
+                                        <i class="fas jam-can-vote"></i>
+                                        <span class="package-vote-button-text">Vote for this package</span>
+                                    </button>
+                                {{/if}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    {{/each}}
+</div>

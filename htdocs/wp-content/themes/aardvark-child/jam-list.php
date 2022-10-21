@@ -1,5 +1,6 @@
 <?php
 /* Template Name: Jam List */
+//Test ici encore
 
 //Include the package jam config from the root directory
 require_once($_SERVER['DOCUMENT_ROOT'] . '/JamConfig.php');
@@ -17,23 +18,36 @@ if ( $settings &&  is_array( $settings ) ) {
 
 $compiler = getHandleBars();
 
+$all_packages_name = array_unique(array_merge(
+	PACKAGE_JAM_CATEGORIES_NOMINATIONS['best-package'],
+	PACKAGE_JAM_CATEGORIES_NOMINATIONS['useful'],
+	PACKAGE_JAM_CATEGORIES_NOMINATIONS['polished'],
+	PACKAGE_JAM_CATEGORIES_NOMINATIONS['mind-blowing'],
+	PACKAGE_JAM_CATEGORIES_NOMINATIONS['wacky'],
+	PACKAGE_JAM_CATEGORIES_NOMINATIONS['gorgeous'],
+	PACKAGE_JAM_CATEGORIES_NOMINATIONS['massive'],
+	PACKAGE_JAM_CATEGORIES_NOMINATIONS['educational'],
+	PACKAGE_JAM_CATEGORIES_NOMINATIONS['integratable'],
+	PACKAGE_JAM_CATEGORIES_NOMINATIONS['first-package']
+));
+
 //Get all the packages nominated for the jam from every category
 $args = array(
     'post_type' => 'package',
-    'post__in' => array_merge(
-        PACKAGE_JAM_CATEGORIES_NOMINATIONS['best-package'],
-        PACKAGE_JAM_CATEGORIES_NOMINATIONS['useful'],
-        PACKAGE_JAM_CATEGORIES_NOMINATIONS['polished'],
-        PACKAGE_JAM_CATEGORIES_NOMINATIONS['mind-blowing'],
-        PACKAGE_JAM_CATEGORIES_NOMINATIONS['wacky'],
-        PACKAGE_JAM_CATEGORIES_NOMINATIONS['gorgeous'],
-        PACKAGE_JAM_CATEGORIES_NOMINATIONS['massive'],
-        PACKAGE_JAM_CATEGORIES_NOMINATIONS['educational'],
-        PACKAGE_JAM_CATEGORIES_NOMINATIONS['integratable'],
-        PACKAGE_JAM_CATEGORIES_NOMINATIONS['first-package']
-    )
+    'post_name__in' => $all_packages_name,
+	'posts_per_page' => -1
 );
 $query = new WP_Query($args);
+
+
+//If the user is loggedin, get the user's votes
+if (is_user_logged_in()) {
+	$user = wp_get_current_user();
+	$user_id = $user->ID;
+	$user_votes = get_user_meta($user_id, 'package_jam_votes', true);
+} else {
+	$user_votes = array();
+}
 
 ?>
 
@@ -54,13 +68,19 @@ $query = new WP_Query($args);
 						?>
 						<div id="creators-container">
 						<?php
-                        $category_list_elements = array();
+						$elements = [];
+                        $category_list_elements = [];
                         foreach(PACKAGE_JAM_CATEGORIES as $category => $category_name)
                         {
                             $category_list_elements[$category] = array(
                                 'category' => $category,
                                 'category_name' => $category_name,
-                                'package-rows' => array()
+								'category_description' => PACKAGE_JAM_CATEGORY_DESCRIPTION[$category],
+                                'package-rows' => array(),
+								'css_display' => $category == 'best-package' ? 'block' : 'none',
+								'votes_left' => !empty($user_votes[$category]) && $user_votes[$category] ? 3 - count($user_votes[$category]) : 3,
+								'is_active' => $category == 'best-package' ? 'jam-category-active' : '',
+								'is_logged_in' => is_user_logged_in()
                             );
                         }
                         
@@ -68,16 +88,39 @@ $query = new WP_Query($args);
 						{
 							$query->the_post();
 							$post = get_post();
-							add_filter( 'excerpt_length', function( $length ) { return 160; } );
-							$elements = package_jam_row_generate_data($post);
+							$elements_row = package_jam_row_generate_data($post);
 							
                             //Add the package to the correct categories
 
-                            foreach($elements['categories'] as $category)
+                            foreach($elements_row['categories'] as $category)
                             {
-                                $category_list_elements[$category]['package-rows'][] = $elements;
+								//Duplicate the entry for safe modification
+								$package_row = $elements_row;
+								//Add a flag if the user voted for this package
+								if (isset($user_votes[$category]) && in_array($post->post_name, $user_votes[$category])) {
+									$package_row['user_voted'] = true;
+								} else {
+									$package_row['user_voted'] = false;
+								}
+
+								//Disable the vote button if the user already voted for 3 packages
+								if (isset($user_votes[$category]) && count($user_votes[$category]) >= 3) {
+									$package_row['votes_open'] = 'disabled';
+								} else {
+									$package_row['votes_open'] = '';
+								}
+                                $category_list_elements[$category]['package-rows'][] = $package_row;
                             }
 						}
+
+						//Now we shuffle all category list elements
+						foreach(PACKAGE_JAM_CATEGORIES as $category => $category_name)
+                        {
+							shuffle($category_list_elements[$category]['package-rows']);
+						}
+
+						$elements['category_list_elements'] = $category_list_elements;
+						echo $compiler->render('jam-list', $elements);
 						?>
 						</div>
 						<?php
@@ -98,4 +141,10 @@ $query = new WP_Query($args);
 
 </div>
 
-<?php get_footer();
+<?php 
+wp_enqueue_script('package-jam-js', get_stylesheet_directory_uri() . '/js/package-jam.js', array( 'jquery'), FHUB_RELEASE_TIMESTAMP, true);
+wp_localize_script( 'package-jam-js', 'DATA', array(
+    'restNonce' => wp_create_nonce('wp_rest'),
+    'restUrl' => rest_url()
+));
+get_footer();

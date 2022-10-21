@@ -27,60 +27,108 @@ define('PACKAGE_JAM_CATEGORIES', [
     "first-package" => "First Package"
 ]);
 
+define('PACKAGE_JAM_CATEGORY_DESCRIPTION', [
+    "best-package" => "Your favorite package of the jam. You do not need to have a reason for this, just let your heart decide.",
+    "useful" => "Many GMs or players will find their Foundry game improved from enabling this package.",
+    "polished" => "The package author made every effort to ensure full functionality and considered every use case and detail.",
+    "mind-blowing" => "This package exceeds expectations of what's possible inside Foundry.",
+    "wacky" => "The package author best capitalized on this opportunity to introduce a package that will make GMs and players laugh, mostly out of absurdity.",
+    "gorgeous" => "The package author utilized the game canvas, webpage styling, or design principles to provide an elevated experience for their users.",
+    "massive" => "The effort that went into the package was evident in the number of features, amount of content, or a wide set of configuration possiblities that enables users to try it a multitude of ways.",
+    "educational" => "The package author used this opportunity to bring real world knowledge/data into their submission for the benefit of their users, or it allows educational opportunities between GM and players.",
+    "integratable" => "The package allows the most flexibility and interoperability for other packages to leverage an API or configuration options provided specifically for other FVTT package developers.",
+    "first-package" => "Packages in this category were created by a developer who had never published a package before."
+]);
+
 define('MAX_VOTES_PER_CATEGORY', 3);
 
 //Set the packages nominated for each category
 
+
+//Dummy data for now!
 define('PACKAGE_JAM_CATEGORIES_NOMINATIONS', [
     "best-package" => [
-        "package-1",
-        "package-2",
-        "package-3"
+        "items-with-spells-5e",
+        "multiple-document-selection",
+        "compendium-permissions",
+        "core-settings-expanded",
+        "alpha-suit",
+        "arbron-summoner",
+        "fvtt-token-targeting",
+        "mcc",
+        "babonus",
+        "ipdip",
+        "scene-scroller-maker",
+        "elevatedvision",
+        "foundry-die-hard",
+        "button-feel",
+        "audio-metadata-reader",
+        "split-join-journal",
+        "gurps-instant-defaults"
     ],
     "useful" => [
-        "package-4",
-        "package-5",
-        "package-6"
+        "items-with-spells-5e",
+        "multiple-document-selection",
+        "compendium-permissions",
+        "core-settings-expanded",
+        "alpha-suit",
+        "arbron-summoner",
+        "fvtt-token-targeting"
     ],
     "polished" => [
-        "package-7",
-        "package-8",
-        "package-9"
+        "mcc",
+        "alpha-suit",
+        "items-with-spells-5e",
+        "babonus",
+        "core-settings-expanded",
+        "ipdip"
     ],
     "mind-blowing" => [
-        "package-10",
-        "package-11",
-        "package-12"
+        "arbron-summoner",
+        "scene-scroller-maker",
+        "elevatedvision"
     ],
     "wacky" => [
-        "package-13",
-        "package-14",
-        "package-15"
+        "ipdip",
+        "foundry-die-hard"
     ],
     "gorgeous" => [
-        "package-16",
-        "package-17",
-        "package-18"
+        "alpha-suit",
+        "ipdip",
+        "elevatedvision",
+        "button-feel",
+        "core-settings-expanded",
+        "mcc"
     ],
     "massive" => [
-        "package-19",
-        "package-20",
-        "package-21"
+        "alpha-suit",
+        "scene-scroller-maker",
+        "elevatedvision",
+        "core-settings-expanded"
     ],
     "educational" => [
-        "package-22",
-        "package-23",
-        "package-24"
+        "audio-metadata-reader",
+        "arbron-summoner",
+        "foundry-die-hard",
+        "mcc"
     ],
     "integratable" => [
-        "package-25",
-        "package-26",
-        "package-27"
+        "items-with-spells-5e",
+        "core-settings-expanded",
+        "babonus",
+        "arbron-summoner",
+        "split-join-journal",
+        "foundry-die-hard",
+        "multiple-document-selection",
+        "fvtt-token-targeting",
+        "mcc",
+        "compendium-permissions",
+        "gurps-instant-defaults"
     ],
     "first-package" => [
-        "package-28",
-        "package-29",
-        "package-30"
+        "ofm-shared-world",
+        "foundry-die-hard",
+        "fcp",
     ]
 ]);
 

@@ -313,9 +313,10 @@ function forgeAPI()
 add_action('packages_update_all', 'cron_package_update_all');
 function cron_package_update_all()
 {
+    ini_set('max_execution_time', 0);
     global $wpdb;
-    $logsPath = '/opt/bitnami/apps/wordpress/logs/';
-    //$logsPath = 'C:\Bitnami\wordpress-5.6-0\apps\wordpress\logs\\';
+    //$logsPath = '/opt/bitnami/apps/wordpress/logs/';
+    $logsPath = 'C:\Bitnami\wordpress-5.6-0\apps\wordpress\logs\\';
     if(file_exists($logsPath.'UPDATE_RUNNING'))
         return;
     
@@ -347,17 +348,16 @@ function cron_package_update_all()
             //Make sure the package is supported on FHub
             if(!in_array($pkg['type'],['module','system','world']))
                 continue;
-            $currentListOfPackage[] = $name = sanitize_title($pkg['name']);
+            $currentListOfPackage[] = $name = sanitize_title($pkg['id']);
 
             $crc32 = crc32(json_encode($pkg));
-            //The bazaar "updated" is more recent than the FHub timestamp. New stuff got added or updated for this package
-            //Or the CRC32 differs and we need to update anyway
-            if ($pkg['updated'] > $lastUpdate || !isset($packagesCRC32[$name]) || (isset($packagesCRC32[$name]) && $packagesCRC32[$name]->crc32 != $crc32)) {
+            //If the CRC32 differs we need to update
+            if (!isset($packagesCRC32[$name]) || (isset($packagesCRC32[$name]) && $packagesCRC32[$name]->crc32 != $crc32)) {
 
                 if ($pkg['updated'] > $maxUpdate) {
                     $maxUpdate = $pkg['updated'];
                 }
-                fwrite($log,date('d.m.Y h:i:s')." | Package needs to be updated: {$pkg['name']} (crc32: $crc32 ) \n");
+                fwrite($log,date('d.m.Y h:i:s')." | Package needs to be updated: {$pkg['id']} (crc32: $crc32 ) \n");
                 //Check if the post exists in the BDD.
                 $post_id = $wpdb->get_var(
                     $wpdb->prepare("SELECT ID FROM wp_posts WHERE post_type = 'package' AND post_name = %s",
@@ -371,7 +371,7 @@ function cron_package_update_all()
                 $meta = [];
                 $meta["author"] = $pkg['authors'];
                 $meta["type"] = $pkg['type'];
-                $meta["real_name"] = $pkg['name'];
+                $meta["real_name"] = $pkg['id'];
                 if (isset($pkg['systems'])) {
                     $meta["systems"] = $pkg['systems'];
                 }
@@ -387,11 +387,13 @@ function cron_package_update_all()
                         }
                     }
                 }
+
                 $meta['installs'] = $pkg['installs'];
                 $meta['latest'] = $pkg['latest'];
                 $meta['created'] = $pkg['created'];
                 $meta['updated'] = $pkg['updated'];
                 $meta['description_full'] = $pkg['description_full'];
+                $meta['description'] = $pkg['description'];
                 $meta['url'] = $pkg['url'];
                 if (isset($pkg['premium'])) {
                     $meta['premium'] = $pkg['premium'];
@@ -418,9 +420,9 @@ function cron_package_update_all()
                     $meta['media'] = $pkg['media'];
                 }
                 //from the "manifest" file
-                $requestManifest = wp_remote_get('https://eu.forge-vtt.com/api/bazaar/manifest/' . $pkg['name'] . '?manifest=1');
+                $requestManifest = wp_remote_get('https://eu.forge-vtt.com/api/bazaar/manifest/' . $pkg['id'] . '?manifest=1');
                 if (!is_wp_error($request)) {
-                    fwrite($log,date('d.m.Y h:i:s')." | Retrived manifest for: " . $pkg['name'] . " \n");
+                    fwrite($log,date('d.m.Y h:i:s')." | Retrived manifest for: " . $pkg['id'] . " \n");
                     $body_manifest = wp_remote_retrieve_body($requestManifest);
                     $manifest = json_decode($body_manifest, true, 512, JSON_INVALID_UTF8_IGNORE);
                     $manifest = $manifest['manifest'];
@@ -465,7 +467,7 @@ function cron_package_update_all()
 
                 //If it doesn't exist, insert a new one
                 if (is_null($post_id)) {
-                    fwrite($log,date('d.m.Y h:i:s')." | New package, insert: " . $pkg['name'] . " \n");
+                    fwrite($log,date('d.m.Y h:i:s')." | New package, insert: " . $pkg['id'] . " \n");
                     $meta['endorsements'] = 0;
                     $meta['endorsements_month'] = 0;
                     $meta['endorsements_week'] = 0;
@@ -473,22 +475,22 @@ function cron_package_update_all()
                         array(
                             'post_author' => 1,
                             'post_title' => $pkg['title'],
-                            'post_content' => $pkg['short_description'],
+                            'post_content' => $pkg['description'],
                             'post_status' => 'publish',
                             'post_type' => 'package',
                             'comment_status' => 'open',
                             'ping_status' => 'closed',
-                            'post_name' => sanitize_title($pkg['name']),
+                            'post_name' => sanitize_title($pkg['id']),
                             //'tags_input' => $tags,
                             'meta_input' => $meta,
                         )
                     );
                 } else { //Or update the existing post
-                    fwrite($log,date('d.m.Y h:i:s')." | Existing package, update: " . $pkg['name'] . " \n");
+                    fwrite($log,date('d.m.Y h:i:s')." | Existing package, update: " . $pkg['id'] . " \n");
                     $data = array(
                         'ID' => $post_id,
                         'post_title' => $pkg['title'],
-                        'post_content' => $pkg['short_description'],
+                        'post_content' => $pkg['description'],
                         'post_status' => 'publish',
                         //'tags_input' => $tags,
                         'tax-input' => array( 
@@ -1084,7 +1086,7 @@ function package_jam_row_generate_data($post){
     $categories = [];
     foreach( PACKAGE_JAM_CATEGORIES_NOMINATIONS as $category => $nominations ){
         foreach( $nominations as $nomination ){
-            if( $nomination['package'] == $post->postid ){
+            if( $nomination == $post->post_name ){
                 $categories[] = $category;
             }
         }
@@ -1104,12 +1106,13 @@ function package_jam_row_generate_data($post){
         "description" => strip_tags(html_entity_decode($post->post_content)),
         "endorsements" => $post->endorsements,
         "nbComments" => $post->comment_count,
-        "url"=>$cover,
+        "cover"=>$cover,
         "coverSize"=>$coverSize,
         "categories" => $categories
     ];
     return $elements;
 }
+
 
 /**
  * Generate Creator Box
@@ -1341,6 +1344,29 @@ function api_get_package_shield(WP_REST_Request $request){
     return $response;
 }
 
+/**
+ * Vote for a package at the Package Jam
+ */
+function api_post_jam_vote(WP_REST_Request $request){
+    // We only allow three votes per user per category
+    $votes = get_user_meta(get_current_user_id(), "package_jam_votes", true);
+    if(!is_array($votes)){
+        $votes = [];
+    }
+    if(!isset($votes[$request['category']])){
+        $votes[$request['category']] = [];
+    }
+    if(count($votes[$request['category']]) >= 3){
+        return new WP_Error("too_many_votes", "You have already voted for three packages in this category.", ["status" => 400]);
+    }
+    if(in_array($request['package'], $votes[$request['category']])){
+        return new WP_Error("already_voted", "You have already voted for this package.", ["status" => 400]);
+    }
+    $votes[$request['category']][] = $request['package'];
+    update_user_meta(get_current_user_id(), "package_jam_votes", $votes);
+    return true;
+}
+
 add_action( 'rest_api_init', function () {
     register_rest_route( 'hubapi/v1', '/package/(?P<package>[a-zA-Z0-9-_]+)', array(
         'methods' => 'GET',
@@ -1355,9 +1381,7 @@ add_action( 'rest_api_init', function () {
             )
         )
     ));
-});
 
-add_action( 'rest_api_init', function () {
     register_rest_route( 'hubapi/v1', '/package/(?P<package>[a-zA-Z0-9-_]+)/shield/(?P<shield>[a-zA-Z0-9-]+)', array(
         'methods' => 'GET',
         'callback' => 'api_get_package_shield',
@@ -1376,6 +1400,29 @@ add_action( 'rest_api_init', function () {
                 'default' => 'endorsements'
             )
         )
+    ));
+
+    register_rest_route( 'package-jam/v1', '/vote' , array(
+        'methods' => 'POST',
+        'callback' => 'api_post_jam_vote',
+        'args' => array(
+            'package' => array(
+                'sanitize_callback' => function($param, $request, $key){
+                    return sanitize_title($param);
+                },
+                'required' => true
+            ),
+            'category' => array(
+                'validate_callback' => function($param, $request, $key){
+                    include_once( $_SERVER['DOCUMENT_ROOT'] . '/JamConfig.php');
+                    return in_array($param, array_keys(PACKAGE_JAM_CATEGORIES));
+                },
+                'required' => true
+            )
+        ),
+        'permission_callback' => function(){
+            return is_user_logged_in();
+        }
     ));
 });
 
@@ -1498,3 +1545,10 @@ function rlv_exact_boost( $results ) {
 	}
 	return $results;
 }
+
+//Local only: remove query string from static assets
+function fj_remove_version( $url ) {
+    return remove_query_arg( 'ver', $url );
+}
+
+add_filter( 'style_loader_src', 'fj_remove_version' );

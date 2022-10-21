@@ -1368,6 +1368,7 @@ function api_post_jam_vote(WP_REST_Request $request){
 }
 
 add_action( 'rest_api_init', function () {
+    remove_filter('rest_pre_serve_request', 'rest_send_cors_headers');
     register_rest_route( 'hubapi/v1', '/package/(?P<package>[a-zA-Z0-9-_]+)', array(
         'methods' => 'GET',
         'callback' => 'api_get_package_info',

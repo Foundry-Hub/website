@@ -10,6 +10,12 @@ jQuery(document).ready(function () {
 
     //Vote for a package
     jQuery(".package-vote-button").click(function () {
+
+        if(!DATA.is_logged_in){
+            jQuery(".bp-login-nav a").click();
+            return;
+        }
+
         let package = jQuery(this).data("name");
         let category = jQuery(this).parents(".jam-tab").data("category");
         let that = this;

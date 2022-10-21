@@ -313,10 +313,10 @@ function forgeAPI()
 add_action('packages_update_all', 'cron_package_update_all');
 function cron_package_update_all()
 {
-    ini_set('max_execution_time', 0);
+    //ini_set('max_execution_time', 0);
     global $wpdb;
-    //$logsPath = '/opt/bitnami/apps/wordpress/logs/';
-    $logsPath = 'C:\Bitnami\wordpress-5.6-0\apps\wordpress\logs\\';
+    $logsPath = '/opt/bitnami/apps/wordpress/logs/';
+    //$logsPath = 'C:\Bitnami\wordpress-5.6-0\apps\wordpress\logs\\';
     if(file_exists($logsPath.'UPDATE_RUNNING'))
         return;
     

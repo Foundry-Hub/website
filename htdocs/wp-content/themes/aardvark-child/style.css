@@ -1782,3 +1782,28 @@ button.package-vote-button[disabled] {
     background: darkgrey;
     cursor: default;
 }
+
+
+.jam-package-footer {
+  position: absolute;
+  bottom: 0;
+  margin: 20px;
+  display: flex;
+  width: 100%;
+}
+
+.jam-package-footer .package-vote {
+  flex: 1;
+}
+
+.jam-package-footer-author {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: #21416C;
+  align-self: self-end;
+}
+
+#jam-list .package-row-left {
+  cursor: pointer;
+}

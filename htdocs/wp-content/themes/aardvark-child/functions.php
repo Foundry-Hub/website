@@ -475,7 +475,7 @@ function cron_package_update_all()
                         array(
                             'post_author' => 1,
                             'post_title' => $pkg['title'],
-                            'post_content' => $pkg['description'],
+                            'post_content' => $pkg['short_description'],
                             'post_status' => 'publish',
                             'post_type' => 'package',
                             'comment_status' => 'open',
@@ -490,7 +490,7 @@ function cron_package_update_all()
                     $data = array(
                         'ID' => $post_id,
                         'post_title' => $pkg['title'],
-                        'post_content' => $pkg['description'],
+                        'post_content' => $pkg['short_description'],
                         'post_status' => 'publish',
                         //'tags_input' => $tags,
                         'tax-input' => array( 

@@ -1,0 +1,61 @@
+name: deploy-prod
+
+on:
+  push:
+    branches: [ "production" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Get Github action IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+        
+      - name: Setting environment variables for AWS
+        run: |
+          echo "AWS_DEFAULT_REGION=eu-central-1" >> $GITHUB_ENV
+          echo "AWS_SG_NAME=fhub-web" >> $GITHUB_ENV
+        
+      - name: Add Github Actions IP to Security group
+        run: |
+          aws ec2 authorize-security-group-ingress --group-name ${{ env.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32    
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: eu-central-1
+          
+      - name: Deploy new file version
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.PROD1_IP }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/bitnami/apps/wordpress
+            git checkout production
+            git pull
+            wp config set FHUB_RELEASE_TIMESTAMP $GITHUB_RUN_ID
+            wp w3-total-cache flush all
+            
+      - name: Clear OPcache
+        uses: joelwmale/webhook-action@2.1.0
+        with:
+          url: ${{ secrets.OPCACHE_RESET_URL }}
+            
+      - name: Purge Cloudflare cache
+        uses: jakejarvis/cloudflare-purge-action@v0.3.0
+        env:
+          CLOUDFLARE_ZONE: ${{ secrets.CLOUDFLARE_ZONE }}
+          CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+            
+      - name: Remove Github Actions IP from security group
+        run: |
+          aws ec2 revoke-security-group-ingress --group-name ${{ env.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: eu-central-1
+          

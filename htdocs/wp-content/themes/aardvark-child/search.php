@@ -78,7 +78,7 @@ $css_classes = trim(implode(' ', array_filter(array_unique($css_classes))));
                             <?php
                             //Search on the Wiki (foundryvtt.wiki)
                             $client = new Client(
-                                'https://foundryvtt.wiki/graphql/',
+                                'http://localhost:3000/graphql/',
                                 ['Authorization' => "Bearer ".WIKI_API_TOKEN]
                             );
 

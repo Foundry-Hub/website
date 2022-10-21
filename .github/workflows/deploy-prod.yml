@@ -33,6 +33,7 @@ jobs:
           host: ${{ secrets.PROD1_IP }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          debug: true
           script: |
             cd /opt/bitnami/apps/wordpress
             git checkout production

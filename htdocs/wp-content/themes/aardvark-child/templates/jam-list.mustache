@@ -7,7 +7,7 @@
     {{#each category_list_elements}}
         <div class="jam-tab" data-category="{{@key}}" style="display:{{this.css_display}}">
             <div class="jam-category-info">
-                <p class="jam-category-description">Category description: {{this.category_description}}</p>
+                <blockquote class="jam-category-description">{{this.category_description}}</blockquote>
                 {{#if is_logged_in}}
                     <p class="jam-category-votes-left">You have <span class="jam-category-votes-left-count">{{this.votes_left}}</span> votes left in this category.</p>
                 {{else}}

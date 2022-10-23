@@ -60,6 +60,11 @@ if (is_user_logged_in()) {
 
 	<div id="gp-inner-container">
 		<div id="gp-content">
+			<?php
+				if ( ! function_exists( 'elementor_theme_do_location' ) OR ! elementor_theme_do_location( 'single' ) ) {
+					get_template_part( 'lib/sections/single/page-content' ); 
+				}	
+			?>
 			<div id="jam-list">
 				<?php
 					if ($query->have_posts()) {

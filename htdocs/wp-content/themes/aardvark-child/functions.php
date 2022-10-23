@@ -1103,7 +1103,7 @@ function package_jam_row_generate_data($post){
         "updated" => $date_updated->format('d M Y'),
         "nbAuthors" => count($post->author),
         "authors" => implode(", ", $post->author),
-        "description" => strip_tags(html_entity_decode($post->post_content)),
+        "description" => strip_tags(html_entity_decode($post->description)).'<br /><br /><i>'.strip_tags(html_entity_decode($post->post_content)).'</i>',
         "endorsements" => $post->endorsements,
         "nbComments" => $post->comment_count,
         "cover"=>$cover,

@@ -1700,30 +1700,29 @@ div#gp-copyright-text {
 }
 
 h2.jam-category-title {
-    flex: 1;
-    font-size: 18px;
-    text-align: center;
-    padding: 1ch;
-    color: #21416C;
-    cursor: pointer;
-    white-space: nowrap;
+  flex: 1;
+  font-size: 18px;
+  text-align: center;
+  padding: 1ch;
+  color: #21416c;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 h2.jam-category-title.active {
-    color: white;
-    background-color: #447DC7;
-    border-radius: 5px;
+  color: white;
+  background-color: #447dc7;
+  border-radius: 5px;
 }
 
-
 #jam-list .package-banner-left {
-    width: 33%;
-    display: flex;
+  width: 33%;
+  display: flex;
 }
 
 #jam-list .package-banner-left div {
-    flex: 1;
-    margin-bottom: 7px;
+  flex: 1;
+  margin-bottom: 7px;
 }
 
 .jam-can-vote {
@@ -1736,35 +1735,35 @@ h2.jam-category-title.active {
 }
 
 .jam-category-info {
-    background-color: aliceblue;
-    margin: 1rem;
-    text-align: center;
-    width: -webkit-fill-available;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  background-color: aliceblue;
+  margin: 1rem;
+  text-align: center;
+  width: -webkit-fill-available;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .jam-category-description {
-    width: fit-content;
-    margin: auto;
+  width: fit-content;
+  margin: auto;
 }
 
 h2.jam-category-title.jam-category-active {
-    background: linear-gradient(to right, #447dc7 0%, #76a0d6 50%,#447dc7 100%);
-    border-radius: 5px;
-    color: white;
+  background: linear-gradient(to right, #447dc7 0%, #76a0d6 50%, #447dc7 100%);
+  border-radius: 5px;
+  color: white;
 }
 
 h2.jam-category-title:hover {
-    background: linear-gradient(to right, #447dc7 0%, #76a0d6 50%,#447dc7 100%);
-    color: white;
-    border-radius: 5px;
+  background: linear-gradient(to right, #447dc7 0%, #76a0d6 50%, #447dc7 100%);
+  color: white;
+  border-radius: 5px;
 }
 
 #jam-list .package-endorse-count {
-    position: relative;
-    top: -10px;
+  position: relative;
+  top: -10px;
 }
 
 @media screen and (max-width: 768px) {
@@ -1775,17 +1774,16 @@ h2.jam-category-title:hover {
 }
 
 button.package-vote-button {
-    right: 1rem;
-    display: flex;
-    gap: 1ch;
-    align-items: center;
+  right: 1rem;
+  display: flex;
+  gap: 1ch;
+  align-items: center;
 }
 
 button.package-vote-button[disabled] {
-    background: darkgrey;
-    cursor: default;
+  background: darkgrey;
+  cursor: default;
 }
-
 
 .jam-package-footer {
   position: absolute;

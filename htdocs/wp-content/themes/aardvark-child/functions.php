@@ -1373,6 +1373,38 @@ function api_post_jam_vote(WP_REST_Request $request){
     return true;
 }
 
+function api_get_package_jam_rankings(){
+    //get the votes and tally them up
+    //expected format: [category => [package => votes]]
+    $votes = [];
+    $users = get_users();
+    foreach($users as $user){
+        $user_votes = get_user_meta($user->ID, "package_jam_votes", true);
+        if(!is_array($user_votes)){
+            continue;
+        }
+        foreach($user_votes as $category => $packages){
+            if(!isset($votes[$category])){
+                $votes[$category] = [];
+            }
+            foreach($packages as $package){
+                if(!isset($votes[$category][$package])){
+                    $votes[$category][$package] = 0;
+                }
+                $votes[$category][$package]++;
+            }
+        }
+    }
+    
+    //sort the votes
+    foreach($votes as $category => $packages){
+        arsort($packages);
+        $votes[$category] = $packages;
+    }
+
+    return $votes;
+}
+
 add_action( 'rest_api_init', function () {
     remove_filter('rest_pre_serve_request', 'rest_send_cors_headers'); 
     register_rest_route( 'hubapi/v1', '/package/(?P<package>[a-zA-Z0-9-_]+)', array(
@@ -1429,6 +1461,14 @@ add_action( 'rest_api_init', function () {
         ),
         'permission_callback' => function(){
             return is_user_logged_in();
+        }
+    ));
+
+    register_rest_route( 'package-jam/v1', '/rankings' , array(
+        'methods' => 'GET',
+        'callback' => 'api_get_package_jam_rankings',
+        'permission_callback' => function(){
+            return current_user_can("administrator");
         }
     ));
 });

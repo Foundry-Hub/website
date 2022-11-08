@@ -317,8 +317,14 @@ function cron_package_update_all()
     global $wpdb;
     $logsPath = '/opt/bitnami/apps/wordpress/logs/';
     //$logsPath = 'C:\Bitnami\wordpress-5.6-0\apps\wordpress\logs\\';
-    if(file_exists($logsPath.'UPDATE_RUNNING'))
-        return;
+    if(file_exists($logsPath.'UPDATE_RUNNING')){
+        //if the file exists for more than 1 hour, it means the cron is stuck and we need to delete it
+        if(filemtime($logsPath.'UPDATE_RUNNING') < time() - 3600){
+            unlink($logsPath.'UPDATE_RUNNING');
+        }else{
+            return;
+        }
+    }
     
     $file_running = fopen($logsPath.'UPDATE_RUNNING','x');
     fclose($file_running);

@@ -67,7 +67,7 @@ if (is_user_logged_in()) {
 			?>
 			<div id="jam-list">
 				<?php
-					if ($query->have_posts()) {
+					if (false && $query->have_posts()) {
 				?>
 						<div id="creators-container">
 						<?php
@@ -124,7 +124,7 @@ if (is_user_logged_in()) {
 						</div>
 				<?php
 					} else {
-						echo "No Results Found";
+						echo "The votes are closed. Thank you for participating!";
 					}
 				?>
 			</div>
